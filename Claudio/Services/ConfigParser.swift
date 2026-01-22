@@ -10,13 +10,9 @@ struct WakeWordConfig {
         [word] + aliases
     }
 
-    /// Display string for UI (e.g., "clawd" or "clawd / claude")
+    /// Display string for UI - just shows the primary wake word
     var displayString: String {
-        if aliases.isEmpty {
-            return "\"\(word)\""
-        }
-        let allQuoted = allWords.map { "\"\($0)\"" }
-        return allQuoted.joined(separator: " or ")
+        "\"\(word)\""
     }
 
     /// Default config when file can't be parsed
