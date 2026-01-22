@@ -183,6 +183,15 @@ final class ClaudioViewModel {
         isHistoryWindowOpen = false
     }
 
+    /// Update current transcription, preserving previous value
+    func updateTranscription(_ text: String?) {
+        // When receiving new non-nil text while current has value, move current to previous
+        if let newText = text, !newText.isEmpty, currentTranscription != nil {
+            previousTranscription = currentTranscription
+        }
+        currentTranscription = text
+    }
+
     // MARK: - Computed Properties
 
     /// Most recent transcription
