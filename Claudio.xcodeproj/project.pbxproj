@@ -28,6 +28,7 @@
 		019 /* SessionStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120; };
 		020 /* StatsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 121; };
 		021 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 122; };
+		022 /* TranscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,7 @@
 		120 /* SessionStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStats.swift; sourceTree = "<group>"; };
 		121 /* StatsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsService.swift; sourceTree = "<group>"; };
 		122 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		123 /* TranscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +150,7 @@
 				115 /* ConversationHistoryView.swift */,
 				116 /* SettingsView.swift */,
 				122 /* StatsView.swift */,
+				123 /* TranscriptionView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -241,6 +244,7 @@
 				019 /* SessionStats.swift in Sources */,
 				020 /* StatsService.swift in Sources */,
 				021 /* StatsView.swift in Sources */,
+				022 /* TranscriptionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
