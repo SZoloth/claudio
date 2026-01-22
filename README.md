@@ -1,18 +1,20 @@
 # Claudio
 
-A native macOS menu bar app for the brabble voice daemon.
+A native macOS menu bar app for the [brabble](https://github.com/steipete/brabble) voice daemon.
 
 ## Features
 
 - **Live Transcriptions** - See what brabble hears in real-time
 - **Processing Indicator** - Visual feedback when Claude is thinking
-- **Conversation History** - Review past voice interactions
+- **Wake Word Display** - Shows configured wake word(s) from brabble config
+- **Multi-Turn Sessions** - Conversations grouped by time proximity
+- **Conversation History** - Review past voice interactions with search/filter
 - **Daemon Status** - Monitor brabble's health at a glance
 
 ## Requirements
 
 - macOS 14.0 (Sonoma) or later
-- [brabble](https://github.com/snarktank/brabble) voice daemon installed and running
+- [brabble](https://github.com/steipete/brabble) voice daemon installed and running
 
 ## Installation
 
