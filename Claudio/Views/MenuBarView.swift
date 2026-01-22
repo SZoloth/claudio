@@ -11,6 +11,13 @@ struct MenuBarView: View {
 
             Divider()
 
+            // Stats view
+            StatsView(stats: viewModel.sessionStats)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+
+            Divider()
+
             // Processing indicator
             if viewModel.isProcessing {
                 ProcessingBanner()

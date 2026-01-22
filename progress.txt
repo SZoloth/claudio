@@ -25,3 +25,19 @@
 - Wake word display shows all aliases: "claudio" or "claude"
 
 ---
+
+## 2026-01-22 - Stats View Feature (compound/add-stats-view)
+
+### Implementation
+- Added SessionStats model with HealthStatus enum for tracking daily metrics
+- Created StatsService that aggregates data from multiple log parsers
+- Built StatsView with collapsible UI showing health indicator, metrics grid, and warnings
+- Integrated into MenuBarView as a section between header and conversations
+
+### Learnings for future iterations:
+- Can reuse existing parsers (ClaudeHookLogParser, TranscriptLogParser) for aggregation
+- HealthStatus thresholds: green >90%, yellow 70-90%, red <70% success rate
+- Stats section works best above conversation list to provide context
+- Warning counts (overflow, no speech) parsed with same grep patterns as claudio-report.sh
+
+---

@@ -11,7 +11,7 @@
         "Model can be populated from parsed log data",
         "Quality checks pass (xcodebuild builds successfully)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T-002",
@@ -24,7 +24,7 @@
         "Updates when logs change using file system watcher",
         "Quality checks pass (xcodebuild builds successfully)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T-003",
@@ -36,7 +36,7 @@
         "Consistent styling with existing Claudio views",
         "Quality checks pass (xcodebuild builds successfully)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T-004",
@@ -48,7 +48,7 @@
         "Stats update when logs change",
         "Quality checks pass (xcodebuild builds successfully)"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
