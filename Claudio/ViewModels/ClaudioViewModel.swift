@@ -196,12 +196,24 @@ final class ClaudioViewModel {
             previousTranscription = currentTranscription
         }
         currentTranscription = text
+
+        // Show/hide floating transcription panel (dispatch to main actor)
+        Task { @MainActor in
+            if let text = text, !text.isEmpty {
+                TranscriptionPanelController.shared.show(text: text)
+            } else {
+                TranscriptionPanelController.shared.hide()
+            }
+        }
     }
 
     /// Clear current transcription (called when processing begins)
     func clearTranscription() {
         currentTranscription = nil
         // previousTranscription is preserved
+        Task { @MainActor in
+            TranscriptionPanelController.shared.hide()
+        }
     }
 
     // MARK: - Computed Properties

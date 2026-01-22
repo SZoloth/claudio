@@ -29,6 +29,7 @@
 		020 /* StatsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 121; };
 		021 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 122; };
 		022 /* TranscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123; };
+		023 /* FloatingTranscriptionWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,7 @@
 		121 /* StatsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsService.swift; sourceTree = "<group>"; };
 		122 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		123 /* TranscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionView.swift; sourceTree = "<group>"; };
+		124 /* FloatingTranscriptionWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTranscriptionWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +153,7 @@
 				116 /* SettingsView.swift */,
 				122 /* StatsView.swift */,
 				123 /* TranscriptionView.swift */,
+				124 /* FloatingTranscriptionWindow.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -245,6 +248,7 @@
 				020 /* StatsService.swift in Sources */,
 				021 /* StatsView.swift in Sources */,
 				022 /* TranscriptionView.swift in Sources */,
+				023 /* FloatingTranscriptionWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
