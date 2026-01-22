@@ -30,9 +30,10 @@ final class BrabbleLogParser {
         guard !line.isEmpty else { return nil }
 
         // Extract components using regex
+        // Note: msgPattern handles escaped quotes like \"
         let timePattern = #"time=([^\s]+)"#
         let levelPattern = #"level=(\w+)"#
-        let msgPattern = #"msg="([^"]+)""#
+        let msgPattern = #"msg="((?:[^"\\]|\\.)*)""#
 
         guard let timeMatch = line.firstMatch(of: try! Regex(timePattern)),
               let levelMatch = line.firstMatch(of: try! Regex(levelPattern)),
@@ -42,7 +43,9 @@ final class BrabbleLogParser {
 
         let timeString = String(timeMatch.output[1].substring!)
         let level = String(levelMatch.output[1].substring!)
-        let message = String(msgMatch.output[1].substring!)
+        // Unescape quotes in the message
+        let rawMessage = String(msgMatch.output[1].substring!)
+        let message = rawMessage.replacingOccurrences(of: "\\\"", with: "\"")
 
         // Parse timestamp
         guard let timestamp = parseTimestamp(timeString) else {
