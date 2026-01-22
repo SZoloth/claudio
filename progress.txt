@@ -26,6 +26,22 @@
 
 ---
 
+## 2026-01-22 - Live Transcription Feature (compound/live-transcription)
+
+### Implementation
+- Added TranscriptionView showing real-time transcription text in popover
+- Created FloatingTranscriptionWindow.swift for persistent NSPanel overlay
+- Panel shows at top of screen during transcription, visible without opening popover
+- Uses blinking cursor animation and fade transitions
+
+### Learnings for future iterations:
+- `@MainActor` classes called from non-isolated contexts need `Task { @MainActor in }` dispatch
+- NSPanel with `.nonactivatingPanel` style doesn't steal keyboard focus
+- `.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]` for visibility in all spaces
+- NSHostingView bridges AppKit window management to SwiftUI content
+
+---
+
 ## 2026-01-22 - Stats View Feature (compound/add-stats-view)
 
 ### Implementation
