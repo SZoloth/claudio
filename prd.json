@@ -1,125 +1,255 @@
 {
-  "projectName": "Claudio",
-  "branchName": "feature/claudio-v1",
-  "stories": [
+  "project": "Claudio",
+  "branchName": "compound/live-transcription",
+  "description": "Add live transcription display to popover showing real-time text as user speaks",
+  "tasks": [
     {
-      "id": 1,
-      "title": "Create Xcode project with MenuBarExtra",
-      "description": "Create macOS app targeting 14+, configure Info.plist with LSUIElement=YES for menu bar only, add basic MenuBarExtra scene",
-      "acceptance": ["App builds", "Shows in menu bar", "No dock icon"],
-      "passes": true
+      "id": "T-001",
+      "title": "Add currentTranscription property to AppState",
+      "description": "Add published property to track the current transcription text being displayed",
+      "acceptanceCriteria": [
+        "File `Claudio/ViewModels/AppState.swift` contains `@Published var currentTranscription: String?`",
+        "Property initialized to nil",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Implemented in ClaudioViewModel (not AppState - PRD uses old naming)"
     },
     {
-      "id": 2,
-      "title": "Add Constants and path configuration",
-      "description": "Create Constants.swift with brabble paths: ~/Library/Application Support/brabble/ for logs, ~/.config/brabble/ for config",
-      "acceptance": ["Paths resolve correctly", "Handles tilde expansion"],
-      "passes": true
+      "id": "T-002",
+      "title": "Add previousTranscription property to AppState",
+      "description": "Add published property to track the previous transcription for context indicator",
+      "acceptanceCriteria": [
+        "File `Claudio/ViewModels/AppState.swift` contains `@Published var previousTranscription: String?`",
+        "Property initialized to nil",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Implemented in ClaudioViewModel"
     },
     {
-      "id": 3,
-      "title": "Implement FileWatcherService",
-      "description": "Create service using DispatchSource.makeFileSystemObjectSource to watch files for changes. Watch transcripts.log, brabble.log, claude-hook.log",
-      "acceptance": ["Callbacks fire on file changes", "Handles file not existing gracefully"],
-      "passes": true
+      "id": "T-003",
+      "title": "Add updateTranscription method to AppState",
+      "description": "Add method to update current transcription and manage previous transcription state",
+      "acceptanceCriteria": [
+        "File `Claudio/ViewModels/AppState.swift` contains `func updateTranscription(_ text: String?)`",
+        "Method sets currentTranscription to provided text",
+        "When called with new non-nil text while currentTranscription has value, moves current to previous first",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Implemented in ClaudioViewModel"
     },
     {
-      "id": 4,
-      "title": "Create BrabbleLogParser",
-      "description": "Parse brabble.log format: time=ISO level=LEVEL msg=\"content\". Extract heard, wake word matched, hook exec, hook output events",
-      "acceptance": ["Parses all event types", "Handles malformed lines"],
-      "passes": true
+      "id": "T-004",
+      "title": "Add clearTranscription method to AppState",
+      "description": "Add method to clear current transcription (called when processing begins)",
+      "acceptanceCriteria": [
+        "File `Claudio/ViewModels/AppState.swift` contains `func clearTranscription()`",
+        "Method sets currentTranscription to nil",
+        "Method preserves previousTranscription value",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "Implemented in ClaudioViewModel"
     },
     {
-      "id": 5,
-      "title": "Create TranscriptLogParser",
-      "description": "Parse transcripts.log format (ISO timestamp + text). Return array of Transcription models",
-      "acceptance": ["Parses timestamps correctly", "Handles UTF-8 text"],
-      "passes": true
+      "id": "T-005",
+      "title": "Create TranscriptionView.swift file",
+      "description": "Create the new SwiftUI view file in Views directory",
+      "acceptanceCriteria": [
+        "File `Claudio/Views/TranscriptionView.swift` exists",
+        "File contains `import SwiftUI`",
+        "File contains `struct TranscriptionView: View`",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": "Created TranscriptionView.swift, added to Xcode project"
     },
     {
-      "id": 6,
-      "title": "Create ClaudeHookLogParser",
-      "description": "Parse claude-hook.log format: [timestamp] Received/Response pairs. Correlate requests with responses",
-      "acceptance": ["Matches requests to responses", "Handles pending requests"],
-      "passes": true
+      "id": "T-006",
+      "title": "Add transcription text parameter to TranscriptionView",
+      "description": "TranscriptionView accepts the transcription text to display",
+      "acceptanceCriteria": [
+        "TranscriptionView has `let text: String` property",
+        "Text is displayed in the view body",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": "Text parameter and display already included in T-005"
     },
     {
-      "id": 7,
-      "title": "Define data models",
-      "description": "Create Transcription, ConversationTurn (with status enum: pending/processing/completed/failed), DaemonStatus (with color property)",
-      "acceptance": ["Models are Identifiable", "Status colors defined"],
-      "passes": true
+      "id": "T-007",
+      "title": "Add blinking cursor to TranscriptionView",
+      "description": "Display a blinking vertical bar cursor after the transcription text",
+      "acceptanceCriteria": [
+        "TranscriptionView contains `@State private var showCursor: Bool`",
+        "View displays vertical bar (|) or Rectangle after text",
+        "Cursor toggles visibility on ~1 second timer using onAppear/Timer",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": "Added blinking Rectangle cursor with 0.5s timer"
     },
     {
-      "id": 8,
-      "title": "Implement ClaudioViewModel",
-      "description": "Create @Observable class with: daemonStatus, recentTranscriptions, conversations, isProcessing. Wire up file watchers to update state",
-      "acceptance": ["State updates on file changes", "Published properties trigger UI updates"],
-      "passes": true
+      "id": "T-008",
+      "title": "Style TranscriptionView container",
+      "description": "Add subtle background tint matching ProcessingBanner style",
+      "acceptanceCriteria": [
+        "TranscriptionView has background with light tint (similar to ProcessingBanner)",
+        "Uses padding consistent with other popover sections",
+        "Supports multi-line text that expands naturally",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": "Added blue tint background matching ProcessingBanner, multi-line text support"
     },
     {
-      "id": 9,
-      "title": "Add ProcessRunner for daemon checks",
-      "description": "Create service to check if brabble is running via PID file. Update daemonStatus accordingly",
-      "acceptance": ["Detects running/stopped daemon", "Handles missing PID file"],
-      "passes": true
+      "id": "T-009",
+      "title": "Create PreviousTranscriptionIndicator view",
+      "description": "Create view showing truncated previous transcription text",
+      "acceptanceCriteria": [
+        "File `Claudio/Views/TranscriptionView.swift` contains `struct PreviousTranscriptionIndicator: View`",
+        "View accepts `text: String` parameter",
+        "Displays 'Previous: [text...]' with text truncated to ~50 chars",
+        "Uses muted/secondary text color",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 9,
+      "passes": true,
+      "notes": "Added PreviousTranscriptionIndicator with 50 char truncation"
     },
     {
-      "id": 10,
-      "title": "Build MenuBarLabel",
-      "description": "Create menu bar icon with waveform SF Symbol and colored status dot. Color reflects daemon status",
-      "acceptance": ["Icon visible in menu bar", "Color updates with status"],
-      "passes": true
+      "id": "T-010",
+      "title": "Add TranscriptionView to MenuBarView",
+      "description": "Integrate TranscriptionView into popover between StatusHeader and ProcessingBanner",
+      "acceptanceCriteria": [
+        "File `Claudio/Views/MenuBarView.swift` imports or contains TranscriptionView usage",
+        "TranscriptionView placed after StatusHeader section",
+        "TranscriptionView placed before ProcessingBanner section",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 10,
+      "passes": true,
+      "notes": "Added between StatusHeader and ProcessingBanner"
     },
     {
-      "id": 11,
-      "title": "Build MenuBarView popover",
-      "description": "Create popover with: StatusHeader, processing indicator (when active), list of recent conversations, action buttons",
-      "acceptance": ["Shows last 5 conversations", "Processing indicator animates"],
-      "passes": true
+      "id": "T-011",
+      "title": "Conditionally show TranscriptionView",
+      "description": "Only display TranscriptionView when currentTranscription is non-nil and non-empty",
+      "acceptanceCriteria": [
+        "MenuBarView checks `viewModel.currentTranscription` before showing TranscriptionView",
+        "Uses `if let` or similar conditional to unwrap optional",
+        "Empty string also hides the view",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 11,
+      "passes": true,
+      "notes": "Conditional check already included in T-010 implementation"
     },
     {
-      "id": 12,
-      "title": "Build ConversationTurnRow",
-      "description": "Create row showing user request (blue icon) and Claude response (purple icon). Show spinner for pending, timestamp at bottom",
-      "acceptance": ["User/assistant visually distinct", "Relative timestamps"],
-      "passes": true
+      "id": "T-012",
+      "title": "Add fade animation to TranscriptionView",
+      "description": "Animate appearance/disappearance of transcription view",
+      "acceptanceCriteria": [
+        "TranscriptionView appearance uses `.transition(.opacity)` or similar",
+        "Animation duration approximately 0.2 seconds",
+        "Wrapped in `withAnimation` or uses `.animation` modifier",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 12,
+      "passes": true,
+      "notes": "Added opacity transition with 0.2s easeInOut animation"
     },
     {
-      "id": 13,
-      "title": "Build ConversationHistoryView",
-      "description": "Create full window view with complete conversation history. Add search/filter. Open via button or keyboard shortcut",
-      "acceptance": ["Shows all conversations", "Cmd+Shift+H opens window"],
-      "passes": true
+      "id": "T-013",
+      "title": "Show PreviousTranscriptionIndicator when appropriate",
+      "description": "Display previous transcription indicator when current is nil but previous exists",
+      "acceptanceCriteria": [
+        "MenuBarView shows PreviousTranscriptionIndicator when currentTranscription is nil",
+        "Only shows when previousTranscription is non-nil and non-empty",
+        "Positioned in same location as TranscriptionView",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 13,
+      "passes": true,
+      "notes": "Shows when currentTranscription is nil and previousTranscription exists"
     },
     {
-      "id": 14,
-      "title": "Add error handling",
-      "description": "Handle: files not existing, brabble not running, parse errors. Show appropriate UI states",
-      "acceptance": ["Graceful degradation", "Helpful error messages"],
-      "passes": true
+      "id": "T-014",
+      "title": "Identify transcription parsing location",
+      "description": "Find where transcriptions are currently parsed from brabble logs",
+      "acceptanceCriteria": [
+        "Identify file that parses transcription events (log notes with file path)",
+        "Identify method/function that receives transcription text (log to notes)",
+        "Determine if partial transcriptions are emitted (log finding to notes)",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 14,
+      "passes": true,
+      "notes": "BrabbleLogParser.swift:parseMessage() handles 'heard:' events with transcription text. handleBrabbleLogChange() in ClaudioViewModel already watches brabble.log. Partial transcriptions are emitted as separate 'heard:' events."
     },
     {
-      "id": 15,
-      "title": "Add launch at login option",
-      "description": "Create SettingsView with toggle for launch at login using SMAppService",
-      "acceptance": ["Toggle persists", "App launches at login when enabled"],
-      "passes": true
+      "id": "T-015",
+      "title": "Wire transcription updates to AppState",
+      "description": "Call AppState.updateTranscription when new transcription text arrives",
+      "acceptanceCriteria": [
+        "Transcription parser calls `appState.updateTranscription(text)` when text arrives",
+        "Uses existing AppState instance (via dependency injection or singleton)",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 15,
+      "passes": true,
+      "notes": "handleBrabbleLogChange now calls updateTranscription on heard events"
     },
     {
-      "id": 16,
-      "title": "Display wake word in dropdown",
-      "description": "Parse brabble config.toml to read wake word configuration. Display active wake word(s) in StatusHeader and EmptyConversationsView",
-      "acceptance": ["Parses config.toml", "Shows wake word in header", "Dynamic empty state text"],
-      "passes": true
+      "id": "T-016",
+      "title": "Clear transcription when processing begins",
+      "description": "Call clearTranscription when Claude starts processing the request",
+      "acceptanceCriteria": [
+        "When `isProcessing` becomes true, call `clearTranscription()`",
+        "Can be triggered in same location that sets isProcessing = true",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 16,
+      "passes": true,
+      "notes": "clearTranscription called when hookExecuted detected"
     },
     {
-      "id": 17,
-      "title": "Add multi-turn conversation sessions",
-      "description": "Group conversation turns into sessions based on time gaps (5 min threshold). Create ConversationSession model. Update MenuBarView to show sessions. Update ConversationHistoryView to display session-grouped conversations",
-      "acceptance": ["Sessions group turns within 5 min", "Popover shows collapsed sessions", "History view shows session cards", "Sessions expand to show individual turns"],
-      "passes": true
+      "id": "T-017",
+      "title": "Add TranscriptionView to Xcode project",
+      "description": "Update project.pbxproj to include new TranscriptionView.swift file",
+      "acceptanceCriteria": [
+        "File `Claudio.xcodeproj/project.pbxproj` contains reference to TranscriptionView.swift",
+        "File added to PBXBuildFile section",
+        "File added to PBXFileReference section",
+        "File added to Views PBXGroup",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 17,
+      "passes": true,
+      "notes": "Already completed in T-005 (file added to all project.pbxproj sections)"
+    },
+    {
+      "id": "T-018",
+      "title": "Final build verification",
+      "description": "Verify complete implementation builds successfully",
+      "acceptanceCriteria": [
+        "Run `./build.sh` - exits with code 0",
+        "No warnings related to TranscriptionView",
+        "App binary created at build/Claudio.app"
+      ],
+      "priority": 18,
+      "passes": true,
+      "notes": "Build succeeded, no TranscriptionView-related warnings, app binary at build/Claudio.app"
     }
   ]
 }
