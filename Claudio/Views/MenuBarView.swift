@@ -250,6 +250,13 @@ struct ActionsBar: View {
                     .font(.system(size: 12))
             }
             .buttonStyle(.plain)
+
+            Button(action: { NSApplication.shared.terminate(nil) }) {
+                Image(systemName: "power")
+                    .font(.system(size: 12))
+            }
+            .buttonStyle(.plain)
+            .help("Quit Claudio")
         }
         .padding(12)
     }
