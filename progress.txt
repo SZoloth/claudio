@@ -1,0 +1,27 @@
+## Codebase Patterns
+
+- SwiftUI macOS menu bar app using `MenuBarExtra` with `.window` style
+- `@Observable` pattern (macOS 14+) for state management in ViewModels
+- File watching via `DispatchSource.makeFileSystemObjectSource`
+- TOML config parsing using regex (no external dependencies)
+- Session grouping with 5-minute time gap threshold for multi-turn conversations
+- Xcode project structure: App/, Models/, ViewModels/, Services/, Views/
+- brabble logs at ~/Library/Application Support/brabble/
+- brabble config at ~/.config/brabble/config.toml
+
+---
+
+## 2026-01-22 - Stories 1-17
+
+### Initial Implementation (All Stories)
+- Created complete Claudio app with all 17 PRD stories passing
+- Files: ClaudioApp.swift, Models/*.swift, ViewModels/*.swift, Services/*.swift, Views/*.swift
+
+### Learnings for future iterations:
+- When adding new Swift files, must manually edit project.pbxproj to include them
+- PBXBuildFile, PBXFileReference, PBXGroup, and PBXSourcesBuildPhase all need entries
+- ConfigParser uses regex to parse TOML since no Swift TOML library included
+- ConversationSession groups turns by temporal proximity (5-min gap = new session)
+- Wake word display shows all aliases: "claudio" or "claude"
+
+---

@@ -1,0 +1,10 @@
+{
+  "tool": "claude",
+  "reportsDir": "./reports",
+  "outputDir": "./compound",
+  "qualityChecks": [
+    "xcodebuild -project Claudio.xcodeproj -scheme Claudio -configuration Debug build"
+  ],
+  "maxIterations": 25,
+  "branchPrefix": "compound/"
+}

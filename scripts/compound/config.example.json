@@ -1,0 +1,9 @@
+{
+  "tool": "amp",
+  "reportsDir": "./reports",
+  "outputDir": "./scripts/compound",
+  "qualityChecks": ["npm run typecheck", "npm test"],
+  "maxIterations": 25,
+  "branchPrefix": "compound/",
+  "analyzeCommand": ""
+}
