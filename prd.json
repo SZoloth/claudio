@@ -1,0 +1,125 @@
+{
+  "projectName": "Claudio",
+  "branchName": "feature/claudio-v1",
+  "stories": [
+    {
+      "id": 1,
+      "title": "Create Xcode project with MenuBarExtra",
+      "description": "Create macOS app targeting 14+, configure Info.plist with LSUIElement=YES for menu bar only, add basic MenuBarExtra scene",
+      "acceptance": ["App builds", "Shows in menu bar", "No dock icon"],
+      "passes": true
+    },
+    {
+      "id": 2,
+      "title": "Add Constants and path configuration",
+      "description": "Create Constants.swift with brabble paths: ~/Library/Application Support/brabble/ for logs, ~/.config/brabble/ for config",
+      "acceptance": ["Paths resolve correctly", "Handles tilde expansion"],
+      "passes": true
+    },
+    {
+      "id": 3,
+      "title": "Implement FileWatcherService",
+      "description": "Create service using DispatchSource.makeFileSystemObjectSource to watch files for changes. Watch transcripts.log, brabble.log, claude-hook.log",
+      "acceptance": ["Callbacks fire on file changes", "Handles file not existing gracefully"],
+      "passes": true
+    },
+    {
+      "id": 4,
+      "title": "Create BrabbleLogParser",
+      "description": "Parse brabble.log format: time=ISO level=LEVEL msg=\"content\". Extract heard, wake word matched, hook exec, hook output events",
+      "acceptance": ["Parses all event types", "Handles malformed lines"],
+      "passes": true
+    },
+    {
+      "id": 5,
+      "title": "Create TranscriptLogParser",
+      "description": "Parse transcripts.log format (ISO timestamp + text). Return array of Transcription models",
+      "acceptance": ["Parses timestamps correctly", "Handles UTF-8 text"],
+      "passes": true
+    },
+    {
+      "id": 6,
+      "title": "Create ClaudeHookLogParser",
+      "description": "Parse claude-hook.log format: [timestamp] Received/Response pairs. Correlate requests with responses",
+      "acceptance": ["Matches requests to responses", "Handles pending requests"],
+      "passes": true
+    },
+    {
+      "id": 7,
+      "title": "Define data models",
+      "description": "Create Transcription, ConversationTurn (with status enum: pending/processing/completed/failed), DaemonStatus (with color property)",
+      "acceptance": ["Models are Identifiable", "Status colors defined"],
+      "passes": true
+    },
+    {
+      "id": 8,
+      "title": "Implement ClaudioViewModel",
+      "description": "Create @Observable class with: daemonStatus, recentTranscriptions, conversations, isProcessing. Wire up file watchers to update state",
+      "acceptance": ["State updates on file changes", "Published properties trigger UI updates"],
+      "passes": true
+    },
+    {
+      "id": 9,
+      "title": "Add ProcessRunner for daemon checks",
+      "description": "Create service to check if brabble is running via PID file. Update daemonStatus accordingly",
+      "acceptance": ["Detects running/stopped daemon", "Handles missing PID file"],
+      "passes": true
+    },
+    {
+      "id": 10,
+      "title": "Build MenuBarLabel",
+      "description": "Create menu bar icon with waveform SF Symbol and colored status dot. Color reflects daemon status",
+      "acceptance": ["Icon visible in menu bar", "Color updates with status"],
+      "passes": true
+    },
+    {
+      "id": 11,
+      "title": "Build MenuBarView popover",
+      "description": "Create popover with: StatusHeader, processing indicator (when active), list of recent conversations, action buttons",
+      "acceptance": ["Shows last 5 conversations", "Processing indicator animates"],
+      "passes": true
+    },
+    {
+      "id": 12,
+      "title": "Build ConversationTurnRow",
+      "description": "Create row showing user request (blue icon) and Claude response (purple icon). Show spinner for pending, timestamp at bottom",
+      "acceptance": ["User/assistant visually distinct", "Relative timestamps"],
+      "passes": true
+    },
+    {
+      "id": 13,
+      "title": "Build ConversationHistoryView",
+      "description": "Create full window view with complete conversation history. Add search/filter. Open via button or keyboard shortcut",
+      "acceptance": ["Shows all conversations", "Cmd+Shift+H opens window"],
+      "passes": true
+    },
+    {
+      "id": 14,
+      "title": "Add error handling",
+      "description": "Handle: files not existing, brabble not running, parse errors. Show appropriate UI states",
+      "acceptance": ["Graceful degradation", "Helpful error messages"],
+      "passes": true
+    },
+    {
+      "id": 15,
+      "title": "Add launch at login option",
+      "description": "Create SettingsView with toggle for launch at login using SMAppService",
+      "acceptance": ["Toggle persists", "App launches at login when enabled"],
+      "passes": true
+    },
+    {
+      "id": 16,
+      "title": "Display wake word in dropdown",
+      "description": "Parse brabble config.toml to read wake word configuration. Display active wake word(s) in StatusHeader and EmptyConversationsView",
+      "acceptance": ["Parses config.toml", "Shows wake word in header", "Dynamic empty state text"],
+      "passes": true
+    },
+    {
+      "id": 17,
+      "title": "Add multi-turn conversation sessions",
+      "description": "Group conversation turns into sessions based on time gaps (5 min threshold). Create ConversationSession model. Update MenuBarView to show sessions. Update ConversationHistoryView to display session-grouped conversations",
+      "acceptance": ["Sessions group turns within 5 min", "Popover shows collapsed sessions", "History view shows session cards", "Sessions expand to show individual turns"],
+      "passes": true
+    }
+  ]
+}
