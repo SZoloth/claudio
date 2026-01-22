@@ -1,0 +1,54 @@
+{
+  "title": "Session Statistics View",
+  "branch": "compound/add-stats-view",
+  "tasks": [
+    {
+      "id": "T-001",
+      "title": "Create StatsModel for metrics aggregation",
+      "description": "Add a model to aggregate log data into displayable statistics. Create SessionStats model with: transcriptionCount, successRate, avgResponseTime, overflowCount, noSpeechCount. Parse log files to calculate metrics for current day.",
+      "acceptance_criteria": [
+        "Create SessionStats model with required fields",
+        "Model can be populated from parsed log data",
+        "Quality checks pass (xcodebuild builds successfully)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "T-002",
+      "title": "Add StatsService to watch and parse logs",
+      "description": "Service that reads brabble logs and calculates current stats. Create StatsService that watches log files, calculates metrics matching claudio-report.sh logic, and updates stats when logs change.",
+      "acceptance_criteria": [
+        "StatsService watches brabble log files",
+        "Calculates metrics: transcription count, success rate, overflow count",
+        "Calculates average response time from timestamp pairs",
+        "Updates when logs change using file system watcher",
+        "Quality checks pass (xcodebuild builds successfully)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "T-003",
+      "title": "Add StatsView UI component",
+      "description": "SwiftUI view showing statistics and health indicator. Display key metrics and show health indicator dot (green/yellow/red) based on success rate.",
+      "acceptance_criteria": [
+        "Display metrics: transcriptions, success rate, response time, overflow count",
+        "Show health indicator: green (>90%), yellow (70-90%), red (<70%)",
+        "Consistent styling with existing Claudio views",
+        "Quality checks pass (xcodebuild builds successfully)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "T-004",
+      "title": "Integrate StatsView into menu dropdown",
+      "description": "Add stats section to main menu bar dropdown. Stats visible and updates in real-time.",
+      "acceptance_criteria": [
+        "Stats section visible in menu dropdown",
+        "Section is collapsible/expandable",
+        "Stats update when logs change",
+        "Quality checks pass (xcodebuild builds successfully)"
+      ],
+      "passes": false
+    }
+  ]
+}
