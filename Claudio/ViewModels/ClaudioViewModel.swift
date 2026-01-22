@@ -36,6 +36,9 @@ final class ClaudioViewModel {
     /// Current live transcription text being displayed
     var currentTranscription: String?
 
+    /// Previous transcription for context indicator
+    var previousTranscription: String?
+
     /// Current active session (if any)
     var currentSession: ConversationSession? {
         sessions.first { $0.isActive }
