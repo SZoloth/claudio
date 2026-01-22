@@ -30,6 +30,9 @@ final class ClaudioViewModel {
     /// Conversation sessions (grouped turns)
     var sessions: [ConversationSession] = []
 
+    /// Today's session statistics
+    var sessionStats: SessionStats = .empty
+
     /// Current active session (if any)
     var currentSession: ConversationSession? {
         sessions.first { $0.isActive }
@@ -42,6 +45,7 @@ final class ClaudioViewModel {
     private let transcriptParser = TranscriptLogParser()
     private let claudeHookParser = ClaudeHookLogParser()
     private let processRunner = ProcessRunner()
+    private let statsService = StatsService()
 
     private var daemonCheckTimer: Timer?
 
@@ -52,11 +56,13 @@ final class ClaudioViewModel {
         setupFileWatchers()
         startDaemonMonitoring()
         loadInitialData()
+        setupStatsWatching()
     }
 
     deinit {
         fileWatcher.stopAll()
         daemonCheckTimer?.invalidate()
+        statsService.stopWatching()
     }
 
     // MARK: - Setup
@@ -98,6 +104,12 @@ final class ClaudioViewModel {
     private func loadInitialData() {
         reloadTranscriptions()
         reloadConversations()
+    }
+
+    private func setupStatsWatching() {
+        statsService.startWatching { [weak self] stats in
+            self?.sessionStats = stats
+        }
     }
 
     // MARK: - Data Loading

@@ -25,6 +25,9 @@
 		016 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116; };
 		017 /* ConversationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118; };
 		018 /* ConfigParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119; };
+		019 /* SessionStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120; };
+		020 /* StatsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 121; };
+		021 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 122; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +51,9 @@
 		117 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		118 /* ConversationSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSession.swift; sourceTree = "<group>"; };
 		119 /* ConfigParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigParser.swift; sourceTree = "<group>"; };
+		120 /* SessionStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStats.swift; sourceTree = "<group>"; };
+		121 /* StatsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsService.swift; sourceTree = "<group>"; };
+		122 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +111,7 @@
 				103 /* ConversationTurn.swift */,
 				104 /* DaemonStatus.swift */,
 				118 /* ConversationSession.swift */,
+				120 /* SessionStats.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -127,6 +134,7 @@
 				110 /* ClaudeHookLogParser.swift */,
 				111 /* ProcessRunner.swift */,
 				119 /* ConfigParser.swift */,
+				121 /* StatsService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -139,6 +147,7 @@
 				114 /* ConversationTurnRow.swift */,
 				115 /* ConversationHistoryView.swift */,
 				116 /* SettingsView.swift */,
+				122 /* StatsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -229,6 +238,9 @@
 				016 /* SettingsView.swift in Sources */,
 				017 /* ConversationSession.swift in Sources */,
 				018 /* ConfigParser.swift in Sources */,
+				019 /* SessionStats.swift in Sources */,
+				020 /* StatsService.swift in Sources */,
+				021 /* StatsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
