@@ -147,16 +147,21 @@ final class ClaudioViewModel {
     }
 
     private func handleBrabbleLogChange() {
-        // Parse recent events to detect processing state changes
+        // Parse recent events to detect processing state changes and transcriptions
         let events = brabbleParser.parseRecentEvents(at: Constants.brabbleLogPath, count: 10)
 
-        // Check for hook execution events
+        // Check for events (most recent first)
         for event in events.reversed() {
-            if case .hookExecuted = event {
+            switch event {
+            case .heard(let text, _):
+                // Update live transcription display
+                updateTranscription(text)
+            case .hookExecuted:
                 // Hook started - might be processing
                 if !isProcessing {
                     isProcessing = true
                 }
+            default:
                 break
             }
         }
