@@ -157,9 +157,10 @@ final class ClaudioViewModel {
                 // Update live transcription display
                 updateTranscription(text)
             case .hookExecuted:
-                // Hook started - might be processing
+                // Hook started - processing begins
                 if !isProcessing {
                     isProcessing = true
+                    clearTranscription()
                 }
             default:
                 break
