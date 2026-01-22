@@ -23,6 +23,10 @@ struct MenuBarView: View {
                 TranscriptionView(text: transcription)
                     .transition(.opacity)
                     .animation(.easeInOut(duration: 0.2), value: viewModel.currentTranscription)
+            } else if let previous = viewModel.previousTranscription, !previous.isEmpty {
+                PreviousTranscriptionIndicator(text: previous)
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.2), value: viewModel.previousTranscription)
             }
 
             // Processing indicator
