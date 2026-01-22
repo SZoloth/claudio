@@ -18,6 +18,11 @@ struct MenuBarView: View {
 
             Divider()
 
+            // Live transcription display
+            if let transcription = viewModel.currentTranscription, !transcription.isEmpty {
+                TranscriptionView(text: transcription)
+            }
+
             // Processing indicator
             if viewModel.isProcessing {
                 ProcessingBanner()
