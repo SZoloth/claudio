@@ -21,6 +21,8 @@ struct MenuBarView: View {
             // Live transcription display
             if let transcription = viewModel.currentTranscription, !transcription.isEmpty {
                 TranscriptionView(text: transcription)
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.2), value: viewModel.currentTranscription)
             }
 
             // Processing indicator
