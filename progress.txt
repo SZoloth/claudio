@@ -26,6 +26,20 @@
 
 ---
 
+## 2026-01-22 - Multi-Turn Conversations
+
+### Implementation
+- Modified `~/agent-tools/brabble-claude-hook.sh` to use `--continue` flag
+- Session state stored in `~/.config/brabble/claude-session/`
+- Trigger phrases for new session: "new conversation", "start over", "fresh start", "forget everything"
+
+### Learnings for future iterations:
+- Claude Code's `--continue` flag resumes last conversation in working directory
+- No explicit session ID tracking needed - just run from consistent directory
+- Claude handles context compaction automatically for long conversations
+
+---
+
 ## 2026-01-22 - Live Transcription Feature (compound/live-transcription)
 
 ### Implementation
