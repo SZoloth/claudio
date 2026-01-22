@@ -33,6 +33,9 @@ final class ClaudioViewModel {
     /// Today's session statistics
     var sessionStats: SessionStats = .empty
 
+    /// Current live transcription text being displayed
+    var currentTranscription: String?
+
     /// Current active session (if any)
     var currentSession: ConversationSession? {
         sessions.first { $0.isActive }
