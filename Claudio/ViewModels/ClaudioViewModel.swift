@@ -192,6 +192,12 @@ final class ClaudioViewModel {
         currentTranscription = text
     }
 
+    /// Clear current transcription (called when processing begins)
+    func clearTranscription() {
+        currentTranscription = nil
+        // previousTranscription is preserved
+    }
+
     // MARK: - Computed Properties
 
     /// Most recent transcription
