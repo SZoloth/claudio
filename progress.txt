@@ -71,3 +71,29 @@
 - Warning counts (overflow, no speech) parsed with same grep patterns as claudio-report.sh
 
 ---
+
+## 2026-01-22 - Settings System (compound/settings-system)
+
+### Implementation
+- Created AppSettings.swift with @Observable and UserDefaults-backed properties
+- Created KeychainService.swift for secure API key storage using Security framework
+- Created SettingsWriter.swift that exports settings to ~/.config/claudio/hook-config.sh
+- Expanded SettingsView with Mode, Provider, API Key, Model, and Behavior sections
+- Updated brabble-claude-hook.sh to support Claude, OpenAI, and Ollama providers
+- Added transcribe-only mode: cleans transcription with haiku, copies to clipboard
+- Added mode indicator to StatusHeader showing "Transcribe Mode" when active
+
+### Files created:
+- Claudio/Services/AppSettings.swift
+- Claudio/Services/KeychainService.swift
+- Claudio/Services/SettingsWriter.swift
+
+### Learnings for future iterations:
+- @Observable with UserDefaults is simpler than @AppStorage in @Observable classes
+- Keychain uses service+account as unique key - delete before add to update
+- Shell scripts can source config files exported by Swift apps for clean IPC
+- SwiftUI Picker with .segmented style works well for binary mode selection
+- SettingsView can create its own AppSettings instance since UserDefaults is shared
+- OpenAI/Ollama API calls use curl+jq for simplicity in shell scripts
+
+---

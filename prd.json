@@ -1,255 +1,269 @@
 {
   "project": "Claudio",
-  "branchName": "compound/live-transcription",
-  "description": "Add live transcription display to popover showing real-time text as user speaks",
+  "branchName": "compound/settings-system",
+  "description": "Add settings system with provider selection, API keys, model choice, clipboard toggle, and transcribe-only mode",
   "tasks": [
     {
       "id": "T-001",
-      "title": "Add currentTranscription property to AppState",
-      "description": "Add published property to track the current transcription text being displayed",
+      "title": "Create AppSettings model with @AppStorage",
+      "description": "Create the core settings model using SwiftUI's @AppStorage for persistence",
       "acceptanceCriteria": [
-        "File `Claudio/ViewModels/AppState.swift` contains `@Published var currentTranscription: String?`",
-        "Property initialized to nil",
+        "File `Claudio/Services/AppSettings.swift` exists",
+        "Contains `@Observable class AppSettings`",
+        "Has @AppStorage properties: provider, model, copyToClipboard, transcribeOnlyMode, speakResponse",
+        "Provider enum with cases: claude, openai, ollama",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 1,
-      "passes": true,
-      "notes": "Implemented in ClaudioViewModel (not AppState - PRD uses old naming)"
+      "passes": true
     },
     {
       "id": "T-002",
-      "title": "Add previousTranscription property to AppState",
-      "description": "Add published property to track the previous transcription for context indicator",
+      "title": "Add AppSettings to Xcode project",
+      "description": "Update project.pbxproj to include AppSettings.swift",
       "acceptanceCriteria": [
-        "File `Claudio/ViewModels/AppState.swift` contains `@Published var previousTranscription: String?`",
-        "Property initialized to nil",
+        "AppSettings.swift added to PBXBuildFile section",
+        "AppSettings.swift added to PBXFileReference section",
+        "AppSettings.swift added to Services PBXGroup",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 2,
-      "passes": true,
-      "notes": "Implemented in ClaudioViewModel"
+      "passes": true
     },
     {
       "id": "T-003",
-      "title": "Add updateTranscription method to AppState",
-      "description": "Add method to update current transcription and manage previous transcription state",
+      "title": "Create KeychainService for API key storage",
+      "description": "Secure storage for API keys using macOS Keychain",
       "acceptanceCriteria": [
-        "File `Claudio/ViewModels/AppState.swift` contains `func updateTranscription(_ text: String?)`",
-        "Method sets currentTranscription to provided text",
-        "When called with new non-nil text while currentTranscription has value, moves current to previous first",
+        "File `Claudio/Services/KeychainService.swift` exists",
+        "Has `func saveAPIKey(_ key: String, for provider: String)`",
+        "Has `func getAPIKey(for provider: String) -> String?`",
+        "Has `func deleteAPIKey(for provider: String)`",
+        "Uses Security framework for Keychain access",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": "Implemented in ClaudioViewModel"
+      "passes": true
     },
     {
       "id": "T-004",
-      "title": "Add clearTranscription method to AppState",
-      "description": "Add method to clear current transcription (called when processing begins)",
+      "title": "Add KeychainService to Xcode project",
+      "description": "Update project.pbxproj to include KeychainService.swift",
       "acceptanceCriteria": [
-        "File `Claudio/ViewModels/AppState.swift` contains `func clearTranscription()`",
-        "Method sets currentTranscription to nil",
-        "Method preserves previousTranscription value",
+        "KeychainService.swift added to all required project.pbxproj sections",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": "Implemented in ClaudioViewModel"
+      "passes": true
     },
     {
       "id": "T-005",
-      "title": "Create TranscriptionView.swift file",
-      "description": "Create the new SwiftUI view file in Views directory",
+      "title": "Create SettingsWriter service",
+      "description": "Service that writes settings to hook-config.sh for bash script access",
       "acceptanceCriteria": [
-        "File `Claudio/Views/TranscriptionView.swift` exists",
-        "File contains `import SwiftUI`",
-        "File contains `struct TranscriptionView: View`",
+        "File `Claudio/Services/SettingsWriter.swift` exists",
+        "Has `func writeHookConfig(settings: AppSettings)`",
+        "Writes to `~/.config/claudio/hook-config.sh`",
+        "Exports: CLAUDIO_PROVIDER, CLAUDIO_MODEL, CLAUDIO_COPY_CLIPBOARD, CLAUDIO_TRANSCRIBE_ONLY, CLAUDIO_SPEAK_RESPONSE",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 5,
-      "passes": true,
-      "notes": "Created TranscriptionView.swift, added to Xcode project"
+      "passes": true
     },
     {
       "id": "T-006",
-      "title": "Add transcription text parameter to TranscriptionView",
-      "description": "TranscriptionView accepts the transcription text to display",
+      "title": "Add SettingsWriter to Xcode project",
+      "description": "Update project.pbxproj to include SettingsWriter.swift",
       "acceptanceCriteria": [
-        "TranscriptionView has `let text: String` property",
-        "Text is displayed in the view body",
+        "SettingsWriter.swift added to all required project.pbxproj sections",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 6,
-      "passes": true,
-      "notes": "Text parameter and display already included in T-005"
+      "passes": true
     },
     {
       "id": "T-007",
-      "title": "Add blinking cursor to TranscriptionView",
-      "description": "Display a blinking vertical bar cursor after the transcription text",
+      "title": "Add Provider section to SettingsView",
+      "description": "Add LLM provider picker to settings UI",
       "acceptanceCriteria": [
-        "TranscriptionView contains `@State private var showCursor: Bool`",
-        "View displays vertical bar (|) or Rectangle after text",
-        "Cursor toggles visibility on ~1 second timer using onAppear/Timer",
+        "SettingsView has Section labeled 'LLM Provider'",
+        "Contains Picker for provider selection",
+        "Shows options: Claude, OpenAI, Ollama",
+        "Selection persists via AppSettings",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 7,
-      "passes": true,
-      "notes": "Added blinking Rectangle cursor with 0.5s timer"
+      "passes": true
     },
     {
       "id": "T-008",
-      "title": "Style TranscriptionView container",
-      "description": "Add subtle background tint matching ProcessingBanner style",
+      "title": "Add API Key section to SettingsView",
+      "description": "Add secure API key input field",
       "acceptanceCriteria": [
-        "TranscriptionView has background with light tint (similar to ProcessingBanner)",
-        "Uses padding consistent with other popover sections",
-        "Supports multi-line text that expands naturally",
+        "SettingsView has Section labeled 'API Key'",
+        "Contains SecureField for API key entry",
+        "Shows which provider the key is for",
+        "Save button stores key via KeychainService",
+        "Shows checkmark when key is saved",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 8,
-      "passes": true,
-      "notes": "Added blue tint background matching ProcessingBanner, multi-line text support"
+      "passes": true
     },
     {
       "id": "T-009",
-      "title": "Create PreviousTranscriptionIndicator view",
-      "description": "Create view showing truncated previous transcription text",
+      "title": "Add Model section to SettingsView",
+      "description": "Add model picker filtered by selected provider",
       "acceptanceCriteria": [
-        "File `Claudio/Views/TranscriptionView.swift` contains `struct PreviousTranscriptionIndicator: View`",
-        "View accepts `text: String` parameter",
-        "Displays 'Previous: [text...]' with text truncated to ~50 chars",
-        "Uses muted/secondary text color",
+        "SettingsView has Section labeled 'Model'",
+        "Contains Picker for model selection",
+        "Options change based on selected provider",
+        "Claude: opus, sonnet, haiku",
+        "OpenAI: gpt-4o, gpt-4o-mini, o1, o3-mini",
+        "Ollama: shows text field for model name",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 9,
-      "passes": true,
-      "notes": "Added PreviousTranscriptionIndicator with 50 char truncation"
+      "passes": true
     },
     {
       "id": "T-010",
-      "title": "Add TranscriptionView to MenuBarView",
-      "description": "Integrate TranscriptionView into popover between StatusHeader and ProcessingBanner",
+      "title": "Add Behavior section to SettingsView",
+      "description": "Add toggles for clipboard and speech output",
       "acceptanceCriteria": [
-        "File `Claudio/Views/MenuBarView.swift` imports or contains TranscriptionView usage",
-        "TranscriptionView placed after StatusHeader section",
-        "TranscriptionView placed before ProcessingBanner section",
+        "SettingsView has Section labeled 'Behavior'",
+        "Contains Toggle for 'Copy response to clipboard'",
+        "Contains Toggle for 'Speak response aloud'",
+        "Both toggles persist via AppSettings",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 10,
-      "passes": true,
-      "notes": "Added between StatusHeader and ProcessingBanner"
+      "passes": true
     },
     {
       "id": "T-011",
-      "title": "Conditionally show TranscriptionView",
-      "description": "Only display TranscriptionView when currentTranscription is non-nil and non-empty",
+      "title": "Add Mode section to SettingsView",
+      "description": "Add mode picker for conversation vs transcribe-only",
       "acceptanceCriteria": [
-        "MenuBarView checks `viewModel.currentTranscription` before showing TranscriptionView",
-        "Uses `if let` or similar conditional to unwrap optional",
-        "Empty string also hides the view",
+        "SettingsView has Section labeled 'Mode'",
+        "Contains Picker with segmented style",
+        "Options: Conversation, Transcribe Only",
+        "Transcribe Only shows description: 'Transcribe speech, clean up with AI, copy to clipboard'",
+        "Selection persists via AppSettings",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 11,
-      "passes": true,
-      "notes": "Conditional check already included in T-010 implementation"
+      "passes": true
     },
     {
       "id": "T-012",
-      "title": "Add fade animation to TranscriptionView",
-      "description": "Animate appearance/disappearance of transcription view",
+      "title": "Initialize AppSettings in ClaudioApp",
+      "description": "Create and inject AppSettings into the app",
       "acceptanceCriteria": [
-        "TranscriptionView appearance uses `.transition(.opacity)` or similar",
-        "Animation duration approximately 0.2 seconds",
-        "Wrapped in `withAnimation` or uses `.animation` modifier",
+        "ClaudioApp creates AppSettings instance as @State",
+        "AppSettings passed to ClaudioViewModel",
+        "Settings available throughout app via environment or dependency",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 12,
-      "passes": true,
-      "notes": "Added opacity transition with 0.2s easeInOut animation"
+      "passes": true
     },
     {
       "id": "T-013",
-      "title": "Show PreviousTranscriptionIndicator when appropriate",
-      "description": "Display previous transcription indicator when current is nil but previous exists",
+      "title": "Write hook config on settings change",
+      "description": "Call SettingsWriter when any relevant setting changes",
       "acceptanceCriteria": [
-        "MenuBarView shows PreviousTranscriptionIndicator when currentTranscription is nil",
-        "Only shows when previousTranscription is non-nil and non-empty",
-        "Positioned in same location as TranscriptionView",
+        "SettingsView calls SettingsWriter.writeHookConfig on dismiss or onChange",
+        "Config file created at ~/.config/claudio/hook-config.sh",
+        "File contains export statements for all settings",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 13,
-      "passes": true,
-      "notes": "Shows when currentTranscription is nil and previousTranscription exists"
+      "passes": true
     },
     {
       "id": "T-014",
-      "title": "Identify transcription parsing location",
-      "description": "Find where transcriptions are currently parsed from brabble logs",
+      "title": "Update hook script to source config",
+      "description": "Modify brabble-claude-hook.sh to read settings from config file",
       "acceptanceCriteria": [
-        "Identify file that parses transcription events (log notes with file path)",
-        "Identify method/function that receives transcription text (log to notes)",
-        "Determine if partial transcriptions are emitted (log finding to notes)",
+        "Hook script sources ~/.config/claudio/hook-config.sh if it exists",
+        "Falls back to defaults if config missing",
+        "Uses CLAUDIO_MODEL instead of hardcoded 'opus'",
+        "Uses CLAUDIO_SPEAK_RESPONSE to conditionally call say",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 14,
-      "passes": true,
-      "notes": "BrabbleLogParser.swift:parseMessage() handles 'heard:' events with transcription text. handleBrabbleLogChange() in ClaudioViewModel already watches brabble.log. Partial transcriptions are emitted as separate 'heard:' events."
+      "passes": true
     },
     {
       "id": "T-015",
-      "title": "Wire transcription updates to AppState",
-      "description": "Call AppState.updateTranscription when new transcription text arrives",
+      "title": "Add multi-provider support to hook script",
+      "description": "Hook script uses configured provider and API key",
       "acceptanceCriteria": [
-        "Transcription parser calls `appState.updateTranscription(text)` when text arrives",
-        "Uses existing AppState instance (via dependency injection or singleton)",
+        "Hook script checks CLAUDIO_PROVIDER",
+        "For claude: uses existing claude CLI with CLAUDIO_MODEL",
+        "For openai: uses curl to OpenAI API with CLAUDIO_API_KEY",
+        "For ollama: uses curl to local Ollama API",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 15,
-      "passes": true,
-      "notes": "handleBrabbleLogChange now calls updateTranscription on heard events"
+      "passes": true
     },
     {
       "id": "T-016",
-      "title": "Clear transcription when processing begins",
-      "description": "Call clearTranscription when Claude starts processing the request",
+      "title": "Add clipboard support to hook script",
+      "description": "Optionally copy response to clipboard",
       "acceptanceCriteria": [
-        "When `isProcessing` becomes true, call `clearTranscription()`",
-        "Can be triggered in same location that sets isProcessing = true",
+        "Hook script checks CLAUDIO_COPY_CLIPBOARD",
+        "If true, pipes response to `pbcopy`",
+        "Works for both conversation and transcribe-only modes",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 16,
-      "passes": true,
-      "notes": "clearTranscription called when hookExecuted detected"
+      "passes": true
     },
     {
       "id": "T-017",
-      "title": "Add TranscriptionView to Xcode project",
-      "description": "Update project.pbxproj to include new TranscriptionView.swift file",
+      "title": "Implement transcribe-only mode in hook script",
+      "description": "When in transcribe-only mode, clean text and copy to clipboard",
       "acceptanceCriteria": [
-        "File `Claudio.xcodeproj/project.pbxproj` contains reference to TranscriptionView.swift",
-        "File added to PBXBuildFile section",
-        "File added to PBXFileReference section",
-        "File added to Views PBXGroup",
+        "Hook script checks CLAUDIO_TRANSCRIBE_ONLY",
+        "If true, skips conversation with Claude",
+        "Sends transcription to fast model (haiku) for cleanup",
+        "Cleanup prompt: 'Clean up this transcription. Fix grammar, punctuation, remove filler words. Return only the cleaned text.'",
+        "Copies cleaned text to clipboard via pbcopy",
+        "Says 'Copied' or similar short confirmation if speak enabled",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 17,
-      "passes": true,
-      "notes": "Already completed in T-005 (file added to all project.pbxproj sections)"
+      "passes": true
     },
     {
       "id": "T-018",
-      "title": "Final build verification",
-      "description": "Verify complete implementation builds successfully",
+      "title": "Add mode indicator to MenuBarView",
+      "description": "Show current mode in the popover header",
       "acceptanceCriteria": [
-        "Run `./build.sh` - exits with code 0",
-        "No warnings related to TranscriptionView",
-        "App binary created at build/Claudio.app"
+        "StatusHeader shows mode indicator when in transcribe-only mode",
+        "Indicator text: 'Transcribe Mode' with microphone icon",
+        "Uses muted/secondary styling",
+        "Run `./build.sh` - exits with code 0"
       ],
       "priority": 18,
-      "passes": true,
-      "notes": "Build succeeded, no TranscriptionView-related warnings, app binary at build/Claudio.app"
+      "passes": true
+    },
+    {
+      "id": "T-019",
+      "title": "Final integration test",
+      "description": "Verify all settings work end-to-end",
+      "acceptanceCriteria": [
+        "Run `./build.sh` - exits with code 0",
+        "App launches without errors",
+        "Settings view opens and shows all sections",
+        "Config file generated at ~/.config/claudio/hook-config.sh",
+        "Changing settings updates config file"
+      ],
+      "priority": 19,
+      "passes": true
     }
   ]
 }

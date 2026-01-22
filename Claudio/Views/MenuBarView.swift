@@ -54,46 +54,66 @@ struct MenuBarView: View {
 
 struct StatusHeader: View {
     @Bindable var viewModel: ClaudioViewModel
+    private let settings = AppSettings()
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 6) {
-                    StatusIndicator(
-                        status: viewModel.daemonInfo.status,
-                        isProcessing: viewModel.isProcessing,
-                        size: 10
-                    )
-                    Text("brabble")
-                        .font(.system(size: 14, weight: .semibold))
-                }
-
-                Text(viewModel.statusText)
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-            }
-
-            Spacer()
-
-            VStack(alignment: .trailing, spacing: 2) {
-                // Wake word display
+        VStack(spacing: 0) {
+            // Mode indicator when in transcribe-only mode
+            if settings.transcribeOnlyMode {
                 HStack(spacing: 4) {
-                    Image(systemName: "waveform")
-                        .font(.system(size: 9))
-                        .foregroundColor(.secondary)
-                    Text(viewModel.wakeWordConfig.displayString)
-                        .font(.system(size: 10, weight: .medium, design: .monospaced))
-                }
-                .foregroundColor(.secondary)
-
-                if let uptime = viewModel.daemonInfo.uptimeString {
-                    Text(uptime)
+                    Image(systemName: "mic.fill")
                         .font(.system(size: 10))
-                        .foregroundColor(.secondary.opacity(0.7))
+                    Text("Transcribe Mode")
+                        .font(.system(size: 10, weight: .medium))
+                }
+                .foregroundStyle(.secondary)
+                .padding(.vertical, 4)
+                .padding(.horizontal, 8)
+                .background(Color.orange.opacity(0.15))
+                .cornerRadius(4)
+                .padding(.top, 8)
+                .padding(.bottom, 4)
+            }
+
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 6) {
+                        StatusIndicator(
+                            status: viewModel.daemonInfo.status,
+                            isProcessing: viewModel.isProcessing,
+                            size: 10
+                        )
+                        Text("brabble")
+                            .font(.system(size: 14, weight: .semibold))
+                    }
+
+                    Text(viewModel.statusText)
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    // Wake word display
+                    HStack(spacing: 4) {
+                        Image(systemName: "waveform")
+                            .font(.system(size: 9))
+                            .foregroundColor(.secondary)
+                        Text(viewModel.wakeWordConfig.displayString)
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                    }
+                    .foregroundColor(.secondary)
+
+                    if let uptime = viewModel.daemonInfo.uptimeString {
+                        Text(uptime)
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary.opacity(0.7))
+                    }
                 }
             }
+            .padding(12)
         }
-        .padding(12)
     }
 }
 
