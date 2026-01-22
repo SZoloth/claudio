@@ -37,3 +37,29 @@ struct TranscriptionView: View {
         }
     }
 }
+
+/// Shows truncated previous transcription text
+struct PreviousTranscriptionIndicator: View {
+    let text: String
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Text("Previous:")
+                .font(.system(size: 11, weight: .medium))
+
+            Text(truncatedText)
+                .font(.system(size: 11))
+                .lineLimit(1)
+        }
+        .foregroundColor(.secondary)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+    }
+
+    private var truncatedText: String {
+        if text.count > 50 {
+            return String(text.prefix(50)) + "..."
+        }
+        return text
+    }
+}
