@@ -1,0 +1,28 @@
+# Ralph Progress Log
+Started: Thu Jan 22 14:37:35 MST 2026
+---
+
+## Codebase Patterns
+- PRD references "AppState" but codebase uses "ClaudioViewModel" - adapt task names accordingly
+- ViewModel uses @Observable macro (macOS 14+), not @Published wrappers
+- New Swift files must be added to project.pbxproj in 4 places: PBXBuildFile, PBXFileReference, PBXGroup, PBXSourcesBuildPhase
+- File IDs follow sequential pattern: 001, 002... for build files; 101, 102... for file refs
+- ProcessingBanner style: Color.blue.opacity(0.1) background, 12pt horizontal padding, 8pt vertical
+- BrabbleLogParser emits .heard events with transcription text from brabble.log
+
+---
+
+## 2026-01-22 14:51 MST - T-001 through T-018 (ALL TASKS)
+- Implemented live transcription display feature
+- Files changed:
+  - Claudio/ViewModels/ClaudioViewModel.swift (added currentTranscription, previousTranscription, updateTranscription, clearTranscription, wired to handleBrabbleLogChange)
+  - Claudio/Views/TranscriptionView.swift (NEW - TranscriptionView with blinking cursor, PreviousTranscriptionIndicator)
+  - Claudio/Views/MenuBarView.swift (integrated TranscriptionView and PreviousTranscriptionIndicator)
+  - Claudio.xcodeproj/project.pbxproj (added TranscriptionView.swift to project)
+- **Learnings for future iterations:**
+  - @Observable classes don't need @Published - all properties are automatically observable
+  - Timer.scheduledTimer works well for cursor blink animations in SwiftUI
+  - BrabbleLogParser.parseMessage() handles "heard:" events - this is where transcription text comes from
+  - handleBrabbleLogChange() is the integration point for real-time log events
+  - SourceKit warnings during build are often false positives - check actual build output
+---
