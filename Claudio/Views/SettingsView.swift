@@ -21,6 +21,9 @@ struct SettingsView: View {
             // SC-002: Screen Context section
             screenContextSection
 
+            // AG-002: Agentic Mode section
+            agenticModeSection
+
             // T-007: Provider section
             providerSection
 
@@ -190,6 +193,69 @@ struct SettingsView: View {
             }
         } header: {
             Label("Screen Context", systemImage: "camera.viewfinder")
+        }
+    }
+
+    // MARK: - Agentic Mode Section (AG-002)
+
+    private var agenticModeSection: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 12) {
+                Toggle(isOn: $settings.agenticMode) {
+                    Label("Enable Agentic Mode", systemImage: "cpu.fill")
+                }
+                .toggleStyle(.switch)
+                .tint(.purple)
+                .onChange(of: settings.agenticMode) { _, _ in
+                    writeConfigAsync()
+                }
+
+                // Mode status indicator
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(settings.agenticMode ? Color.purple : Color.secondary)
+                        .frame(width: 8, height: 8)
+
+                    Text(settings.agenticMode ? "Agentic Mode Active" : "Prompt-Only Mode")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundStyle(settings.agenticMode ? Color.purple : Color.secondary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(settings.agenticMode ? Color.purple.opacity(0.15) : Color.gray.opacity(0.1))
+                )
+
+                // Warning when enabled
+                if settings.agenticMode {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Tool Access Enabled")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                            Text("Claude can execute tools and take actions on your system. Use with caution.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.orange.opacity(0.1))
+                            .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                    )
+                } else {
+                    Text("When disabled, Claude only responds to prompts without taking actions")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        } header: {
+            Label("Agentic Mode", systemImage: "wand.and.stars")
         }
     }
 

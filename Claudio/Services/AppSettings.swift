@@ -93,6 +93,7 @@ class AppSettings {
         static let speakResponse = "settings.speakResponse"
         static let ollamaModel = "settings.ollamaModel"
         static let screenContextMode = "settings.screenContextMode"
+        static let agenticMode = "settings.agenticMode"
     }
 
     /// Selected LLM provider
@@ -180,6 +181,16 @@ class AppSettings {
         }
         set {
             UserDefaults.standard.set(newValue.rawValue, forKey: Keys.screenContextMode)
+        }
+    }
+
+    /// Agentic mode - allows Claude to use tools and take actions
+    var agenticMode: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: Keys.agenticMode)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Keys.agenticMode)
         }
     }
 }

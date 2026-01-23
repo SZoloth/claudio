@@ -30,6 +30,7 @@ struct SettingsWriter {
             "export CLAUDIO_TRANSCRIBE_ONLY=\"\(settings.transcribeOnlyMode ? "true" : "false")\"",
             "export CLAUDIO_SPEAK_RESPONSE=\"\(settings.speakResponse ? "true" : "false")\"",
             "export CLAUDIO_SCREEN_CONTEXT=\"\(settings.screenContextMode.rawValue)\"",
+            "export CLAUDIO_AGENTIC_MODE=\"\(settings.agenticMode ? "true" : "false")\"",
         ]
 
         // Only write API key if it exists (don't expose empty string)

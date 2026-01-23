@@ -37,3 +37,27 @@ All 8 tasks implemented:
 - Screenshot cleanup should happen after LLM call completes to avoid race conditions
 
 ---
+
+## 2026-01-22 21:45 - AG-001 through AG-006 Complete
+
+All 6 Agentic Mode tasks implemented:
+
+**Files modified:**
+- `Claudio/Services/AppSettings.swift` - Added agenticMode property (Bool, default false)
+- `Claudio/Views/SettingsView.swift` - Added Agentic Mode section with toggle and safety warning
+- `Claudio/Services/SettingsWriter.swift` - Export CLAUDIO_AGENTIC_MODE to hook config
+- `Claudio/Views/MenuBarView.swift` - Added purple "Agentic" indicator badge in StatusHeader
+- `~/agent-tools/brabble-claude-hook.sh` - Conditionally remove -p flag when agentic mode enabled
+
+**Key implementation details:**
+- Agentic mode = full Claude CLI capabilities (tool use enabled)
+- Prompt-only mode = -p flag (responses only, no tool access)
+- Uses `echo "$prompt" | claude` pattern for agentic mode to enable tool use
+- Safety warning displayed when agentic mode is enabled
+
+**Learnings for future iterations:**
+- Claude CLI: `-p` flag is prompt-only (no tools), without it enables full agentic capabilities
+- Piping input via stdin (`echo | claude`) allows agentic tool use while still providing the prompt
+- SourceKit errors during editing are often transient - always verify with actual build
+
+---

@@ -89,9 +89,24 @@ struct StatusHeader: View {
                     .background(Color.blue.opacity(0.15))
                     .cornerRadius(4)
                 }
+
+                // AG-005: Agentic mode indicator
+                if settings.agenticMode {
+                    HStack(spacing: 4) {
+                        Image(systemName: "cpu.fill")
+                            .font(.system(size: 10))
+                        Text("Agentic")
+                            .font(.system(size: 10, weight: .medium))
+                    }
+                    .foregroundStyle(.purple)
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 8)
+                    .background(Color.purple.opacity(0.15))
+                    .cornerRadius(4)
+                }
             }
-            .padding(.top, settings.transcribeOnlyMode || settings.screenContextMode != .off ? 8 : 0)
-            .padding(.bottom, settings.transcribeOnlyMode || settings.screenContextMode != .off ? 4 : 0)
+            .padding(.top, settings.transcribeOnlyMode || settings.screenContextMode != .off || settings.agenticMode ? 8 : 0)
+            .padding(.bottom, settings.transcribeOnlyMode || settings.screenContextMode != .off || settings.agenticMode ? 4 : 0)
 
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
