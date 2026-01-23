@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import CryptoKit
 
 /// A session containing multiple conversation turns grouped by temporal proximity
 struct ConversationSession: Identifiable, Equatable {
@@ -77,6 +78,14 @@ struct ConversationSession: Identifiable, Equatable {
         } else {
             return String(format: "%.1fh", duration / 3600)
         }
+    }
+
+    /// Stable identifier derived from start time and first request content
+    var stableID: String {
+        let firstRequest = turns.first?.userRequest ?? ""
+        let base = "\(startTime.timeIntervalSince1970)|\(firstRequest)"
+        let digest = SHA256.hash(data: Data(base.utf8))
+        return digest.map { String(format: "%02x", $0) }.joined()
     }
 
     // MARK: - Static Methods

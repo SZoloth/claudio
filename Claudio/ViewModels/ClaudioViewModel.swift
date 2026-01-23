@@ -21,14 +21,17 @@ final class ClaudioViewModel {
     /// Any error message to display
     var errorMessage: String?
 
-    /// Whether the full history window is open
-    var isHistoryWindowOpen: Bool = false
+    /// Log availability status
+    var logStatus: LogStatus = .empty
 
     /// Wake word configuration from brabble config
     var wakeWordConfig: WakeWordConfig = .defaultConfig
 
     /// Conversation sessions (grouped turns)
     var sessions: [ConversationSession] = []
+
+    /// Pinned session IDs
+    var pinnedSessionIDs: Set<String> = []
 
     /// Today's session statistics
     var sessionStats: SessionStats = .empty
@@ -46,12 +49,10 @@ final class ClaudioViewModel {
 
     // MARK: - Services
 
-    private let fileWatcher = FileWatcherService()
-    private let brabbleParser = BrabbleLogParser()
-    private let transcriptParser = TranscriptLogParser()
+    private let logStore = LogStore()
+    private let pinnedStore = PinnedSessionsStore()
     private let claudeHookParser = ClaudeHookLogParser()
     private let processRunner = ProcessRunner()
-    private let statsService = StatsService()
 
     private var daemonCheckTimer: Timer?
 
@@ -59,16 +60,14 @@ final class ClaudioViewModel {
 
     init() {
         loadWakeWordConfig()
-        setupFileWatchers()
+        pinnedSessionIDs = pinnedStore.loadPinnedIDs()
+        setupLogStore()
         startDaemonMonitoring()
-        loadInitialData()
-        setupStatsWatching()
     }
 
     deinit {
-        fileWatcher.stopAll()
+        logStore.stop()
         daemonCheckTimer?.invalidate()
-        statsService.stopWatching()
     }
 
     // MARK: - Setup
@@ -77,21 +76,25 @@ final class ClaudioViewModel {
         wakeWordConfig = ConfigParser.parseWakeConfig(at: Constants.configFilePath)
     }
 
-    private func setupFileWatchers() {
-        // Watch transcripts.log
-        fileWatcher.watch(Constants.transcriptsLogPath) { [weak self] in
-            self?.reloadTranscriptions()
+    private func setupLogStore() {
+        logStore.onSnapshotUpdate = { [weak self] snapshot in
+            Task { @MainActor in
+                self?.recentTranscriptions = snapshot.transcriptions.reversed()
+                self?.conversations = snapshot.turns.reversed()
+                self?.sessions = snapshot.sessions
+                self?.isProcessing = snapshot.isProcessing
+                self?.sessionStats = snapshot.stats
+                self?.logStatus = snapshot.logStatus
+            }
         }
 
-        // Watch claude-hook.log
-        fileWatcher.watch(Constants.claudeHookLogPath) { [weak self] in
-            self?.reloadConversations()
+        logStore.onBrabbleEvents = { [weak self] events in
+            Task { @MainActor in
+                self?.handleBrabbleEvents(events)
+            }
         }
 
-        // Watch brabble.log for daemon events
-        fileWatcher.watch(Constants.brabbleLogPath) { [weak self] in
-            self?.handleBrabbleLogChange()
-        }
+        logStore.start()
     }
 
     private func startDaemonMonitoring() {
@@ -107,53 +110,12 @@ final class ClaudioViewModel {
         checkDaemonStatus()
     }
 
-    private func loadInitialData() {
-        reloadTranscriptions()
-        reloadConversations()
-    }
-
-    private func setupStatsWatching() {
-        statsService.startWatching { [weak self] stats in
-            Task { @MainActor in
-                self?.sessionStats = stats
-            }
-        }
-    }
-
-    // MARK: - Data Loading
-
-    func reloadTranscriptions() {
-        let transcriptions = transcriptParser.parseRecentTranscriptions(
-            at: Constants.transcriptsLogPath,
-            count: Constants.maxRecentTranscriptions
-        )
-        self.recentTranscriptions = transcriptions.reversed()
-    }
-
-    func reloadConversations() {
-        let turns = claudeHookParser.parseRecentTurns(
-            at: Constants.claudeHookLogPath,
-            count: 50  // Load more for better session grouping
-        )
-        self.conversations = turns.reversed()
-
-        // Group into sessions
-        self.sessions = ConversationSession.groupTurnsIntoSessions(turns)
-
-        // Update processing state
-        self.isProcessing = turns.last?.status == .pending
-    }
-
     func loadAllConversations() -> [ConversationTurn] {
         claudeHookParser.parseLogFile(at: Constants.claudeHookLogPath).reversed()
     }
 
-    private func handleBrabbleLogChange() {
-        // Parse recent events to detect processing state changes and transcriptions
-        let events = brabbleParser.parseRecentEvents(at: Constants.brabbleLogPath, count: 10)
-
-        // Check for events (most recent first)
-        for event in events.reversed() {
+    private func handleBrabbleEvents(_ events: [BrabbleEvent]) {
+        for event in events {
             switch event {
             case .heard(let text, _):
                 // Update live transcription display
@@ -183,12 +145,18 @@ final class ClaudioViewModel {
         errorMessage = nil
     }
 
-    func openHistoryWindow() {
-        isHistoryWindowOpen = true
+    func togglePin(_ session: ConversationSession) {
+        let id = session.stableID
+        if pinnedSessionIDs.contains(id) {
+            pinnedSessionIDs.remove(id)
+        } else {
+            pinnedSessionIDs.insert(id)
+        }
+        pinnedStore.savePinnedIDs(pinnedSessionIDs)
     }
 
-    func closeHistoryWindow() {
-        isHistoryWindowOpen = false
+    func isSessionPinned(_ session: ConversationSession) -> Bool {
+        pinnedSessionIDs.contains(session.stableID)
     }
 
     /// Update current transcription, preserving previous value
@@ -237,7 +205,9 @@ final class ClaudioViewModel {
 
     /// Recent sessions for popover (limited count)
     var recentSessionsForPopover: [ConversationSession] {
-        Array(sessions.prefix(3))  // Show up to 3 recent sessions
+        let pinned = sessions.filter { isSessionPinned($0) }
+        let unpinned = sessions.filter { !isSessionPinned($0) }
+        return Array((pinned + unpinned).prefix(3))
     }
 
     /// Status color for menu bar icon

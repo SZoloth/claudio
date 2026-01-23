@@ -64,6 +64,7 @@ final class TranscriptionPanelController {
 struct TranscriptionPanelContent: View {
     let text: String
     @State private var showCursor = true
+    @State private var cursorTimer: Timer?
 
     var body: some View {
         HStack(spacing: 4) {
@@ -95,13 +96,22 @@ struct TranscriptionPanelContent: View {
         .onAppear {
             startCursorAnimation()
         }
+        .onDisappear {
+            stopCursorAnimation()
+        }
     }
 
     private func startCursorAnimation() {
-        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+        cursorTimer?.invalidate()
+        cursorTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
             withAnimation(.easeInOut(duration: 0.1)) {
                 showCursor.toggle()
             }
         }
+    }
+
+    private func stopCursorAnimation() {
+        cursorTimer?.invalidate()
+        cursorTimer = nil
     }
 }

@@ -5,6 +5,7 @@ struct TranscriptionView: View {
     let text: String
 
     @State private var showCursor: Bool = true
+    @State private var cursorTimer: Timer?
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -27,14 +28,23 @@ struct TranscriptionView: View {
         .onAppear {
             startCursorBlink()
         }
+        .onDisappear {
+            stopCursorBlink()
+        }
     }
 
     private func startCursorBlink() {
-        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+        cursorTimer?.invalidate()
+        cursorTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
             withAnimation(.easeInOut(duration: 0.1)) {
                 showCursor.toggle()
             }
         }
+    }
+
+    private func stopCursorBlink() {
+        cursorTimer?.invalidate()
+        cursorTimer = nil
     }
 }
 

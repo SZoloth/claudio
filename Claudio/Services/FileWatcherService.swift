@@ -45,8 +45,10 @@ final class FileWatcherService {
             queue: queue
         )
 
-        source.setEventHandler { [weak self] in
-            self?.handleFileChange(url: url, onChange: onChange)
+        source.setEventHandler { [weak self, weak source] in
+            guard let self, let source else { return }
+            let events = source.data
+            self.handleFileChange(url: url, events: events, onChange: onChange)
         }
 
         source.setCancelHandler {
@@ -61,12 +63,15 @@ final class FileWatcherService {
 
     /// Stop watching a specific file
     func stopWatching(_ url: URL) {
+        let hadSource = sources[url] != nil
         if let source = sources[url] {
             source.cancel()
             sources.removeValue(forKey: url)
         }
         if let fd = fileDescriptors[url] {
-            close(fd)
+            if !hadSource {
+                close(fd)
+            }
             fileDescriptors.removeValue(forKey: url)
         }
         debounceWorkItems[url]?.cancel()
@@ -81,7 +86,18 @@ final class FileWatcherService {
     }
 
     /// Handle file change with debouncing
-    private func handleFileChange(url: URL, onChange: @escaping () -> Void) {
+    private func handleFileChange(
+        url: URL,
+        events: DispatchSource.FileSystemEvent,
+        onChange: @escaping () -> Void
+    ) {
+        if events.contains(.delete) || events.contains(.rename) {
+            stopWatching(url)
+            queue.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                self?.watch(url, onChange: onChange)
+            }
+        }
+
         // Cancel any pending work item
         debounceWorkItems[url]?.cancel()
 

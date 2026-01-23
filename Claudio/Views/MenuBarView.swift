@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 /// Main popover view for menu bar
 struct MenuBarView: View {
@@ -10,6 +11,14 @@ struct MenuBarView: View {
             StatusHeader(viewModel: viewModel)
 
             Divider()
+
+            if viewModel.logStatus.hasIssues {
+                LogStatusMessage(status: viewModel.logStatus, compact: true)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+
+                Divider()
+            }
 
             // Stats view
             StatsView(stats: viewModel.sessionStats)
@@ -38,7 +47,10 @@ struct MenuBarView: View {
             if viewModel.sessions.isEmpty {
                 EmptyConversationsView(wakeWord: viewModel.wakeWordConfig.word)
             } else {
-                SessionsList(sessions: viewModel.recentSessionsForPopover)
+                SessionsList(
+                    sessions: viewModel.recentSessionsForPopover,
+                    pinnedSessionIDs: viewModel.pinnedSessionIDs
+                )
             }
 
             Divider()
@@ -192,12 +204,16 @@ struct ProcessingBanner: View {
 
 struct SessionsList: View {
     let sessions: [ConversationSession]
+    let pinnedSessionIDs: Set<String>
 
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
                 ForEach(sessions) { session in
-                    SessionRow(session: session)
+                    SessionRow(
+                        session: session,
+                        isPinned: pinnedSessionIDs.contains(session.stableID)
+                    )
                 }
             }
             .padding(12)
@@ -208,6 +224,7 @@ struct SessionsList: View {
 
 struct SessionRow: View {
     let session: ConversationSession
+    let isPinned: Bool
     @State private var isExpanded = false
 
     var body: some View {
@@ -221,10 +238,18 @@ struct SessionRow: View {
                         .frame(width: 8, height: 8)
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(session.title)
-                            .font(.system(size: 12, weight: .medium))
-                            .lineLimit(1)
-                            .foregroundColor(.primary)
+                        HStack(spacing: 4) {
+                            Text(session.title)
+                                .font(.system(size: 12, weight: .medium))
+                                .lineLimit(1)
+                                .foregroundColor(.primary)
+
+                            if isPinned {
+                                Image(systemName: "star.fill")
+                                    .font(.system(size: 9))
+                                    .foregroundColor(.yellow)
+                            }
+                        }
 
                         HStack(spacing: 6) {
                             // Turn count
@@ -312,10 +337,11 @@ struct EmptyConversationsView: View {
 
 struct ActionsBar: View {
     @Bindable var viewModel: ClaudioViewModel
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         HStack {
-            Button(action: { viewModel.openHistoryWindow() }) {
+            Button(action: { openWindow(id: "history") }) {
                 Label("History", systemImage: "clock.arrow.circlepath")
                     .font(.system(size: 12))
             }
@@ -331,6 +357,21 @@ struct ActionsBar: View {
             .buttonStyle(.plain)
             .help("Refresh status")
 
+            Button(action: { copyLastResponse() }) {
+                Image(systemName: "doc.on.doc")
+                    .font(.system(size: 12))
+            }
+            .buttonStyle(.plain)
+            .help("Copy last response")
+            .disabled(viewModel.latestConversation?.claudeResponse == nil)
+
+            Button(action: { openLogFolder() }) {
+                Image(systemName: "folder")
+                    .font(.system(size: 12))
+            }
+            .buttonStyle(.plain)
+            .help("Open log folder")
+
             SettingsLink {
                 Image(systemName: "gear")
                     .font(.system(size: 12))
@@ -345,6 +386,16 @@ struct ActionsBar: View {
             .help("Quit Claudio")
         }
         .padding(12)
+    }
+
+    private func copyLastResponse() {
+        guard let response = viewModel.latestConversation?.claudeResponse else { return }
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(response, forType: .string)
+    }
+
+    private func openLogFolder() {
+        NSWorkspace.shared.open(Constants.brabbleAppSupportPath)
     }
 }
 

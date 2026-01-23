@@ -55,9 +55,9 @@ struct SettingsWriter {
 
         do {
             try content.write(to: configFile, atomically: true, encoding: .utf8)
-            // Make it executable
+            // Restrict to user-only access for sensitive values
             try FileManager.default.setAttributes(
-                [.posixPermissions: 0o755],
+                [.posixPermissions: 0o600],
                 ofItemAtPath: configFile.path
             )
         } catch {

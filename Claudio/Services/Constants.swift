@@ -57,6 +57,9 @@ enum Constants {
     /// Maximum number of recent transcriptions to show
     static let maxRecentTranscriptions = 10
 
+    /// Maximum number of recent turns to keep in memory
+    static let maxRecentTurns = 200
+
     /// File watcher debounce interval (seconds)
     static let fileWatcherDebounceInterval: TimeInterval = 0.5
 
