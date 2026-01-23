@@ -114,7 +114,9 @@ final class ClaudioViewModel {
 
     private func setupStatsWatching() {
         statsService.startWatching { [weak self] stats in
-            self?.sessionStats = stats
+            Task { @MainActor in
+                self?.sessionStats = stats
+            }
         }
     }
 
