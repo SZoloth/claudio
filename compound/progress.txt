@@ -1,0 +1,19 @@
+## Codebase Patterns
+
+- SwiftUI uses @Observable pattern (macOS 14+), not ObservableObject
+- Settings are stored in AppSettings.swift using @AppStorage
+- SettingsWriter writes to ~/.config/claudio/hook-config.sh for bash script access
+- Hook script is at ~/agent-tools/brabble-claude-hook.sh
+- All new Swift files must be added to project.pbxproj (PBXBuildFile, PBXFileReference, PBXGroup, PBXSourcesBuildPhase)
+- MainActor dispatch required for UI updates from background threads
+- Build command: ./build.sh (wraps xcodebuild)
+
+---
+
+## 2026-01-22 21:30 - Initial Setup
+
+- Created PRD for Screen Context feature
+- Branch: compound/screen-context
+- 8 tasks to implement
+
+---

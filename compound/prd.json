@@ -1,0 +1,113 @@
+{
+  "project": "Claudio",
+  "branchName": "compound/screen-context",
+  "description": "Add screen context awareness - capture screenshots with voice commands to send to Claude",
+  "tasks": [
+    {
+      "id": "SC-001",
+      "title": "Add screenContextMode to AppSettings",
+      "description": "Add a setting to control screen context behavior: off, on-demand, always",
+      "acceptanceCriteria": [
+        "AppSettings has `screenContextMode` property with enum: off, onDemand, always",
+        "Default value is `off`",
+        "Property uses @AppStorage for persistence",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "SC-002",
+      "title": "Add Screen Context section to SettingsView",
+      "description": "Add UI controls for screen context mode in settings",
+      "acceptanceCriteria": [
+        "SettingsView has Section labeled 'Screen Context'",
+        "Contains Picker for mode selection (Off, On-Demand, Always)",
+        "On-Demand shows description about trigger phrases",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "SC-003",
+      "title": "Update SettingsWriter to export screen context setting",
+      "description": "Write CLAUDIO_SCREEN_CONTEXT to hook-config.sh",
+      "acceptanceCriteria": [
+        "SettingsWriter exports CLAUDIO_SCREEN_CONTEXT (off/on-demand/always)",
+        "Config file includes the new setting",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 3,
+      "passes": false
+    },
+    {
+      "id": "SC-004",
+      "title": "Create screenshot capture helper script",
+      "description": "Create a helper script that captures screenshot and returns the path",
+      "acceptanceCriteria": [
+        "File ~/agent-tools/claudio-screenshot.sh exists",
+        "Script captures screenshot to /tmp/claudio-screen-TIMESTAMP.png",
+        "Script outputs the path to stdout",
+        "Script is executable",
+        "Script cleans up screenshots older than 1 hour"
+      ],
+      "priority": 4,
+      "passes": false
+    },
+    {
+      "id": "SC-005",
+      "title": "Add context trigger detection to hook script",
+      "description": "Detect phrases that should trigger screen capture",
+      "acceptanceCriteria": [
+        "Hook script has array of trigger phrases: 'look at', 'see this', 'what's this', 'this error', 'on screen', 'showing'",
+        "Function `should_capture_screen()` returns true if any trigger phrase found",
+        "Only triggers when CLAUDIO_SCREEN_CONTEXT is 'on-demand' or 'always'",
+        "Test manually with echo"
+      ],
+      "priority": 5,
+      "passes": false
+    },
+    {
+      "id": "SC-006",
+      "title": "Integrate screenshot with Claude CLI in hook script",
+      "description": "Pass screenshot to Claude when context is triggered",
+      "acceptanceCriteria": [
+        "Hook script calls claudio-screenshot.sh when screen context triggered",
+        "For Claude provider: uses --image flag with screenshot path",
+        "For OpenAI: includes image in API call (base64 encoded)",
+        "Screenshot file cleaned up after use",
+        "Test manually with voice command"
+      ],
+      "priority": 6,
+      "passes": false
+    },
+    {
+      "id": "SC-007",
+      "title": "Add screen context indicator to Claudio UI",
+      "description": "Show when screen context is active in the menu bar popover",
+      "acceptanceCriteria": [
+        "StatusHeader shows camera icon when screen context mode is not 'off'",
+        "Icon pulses/highlights when screenshot is being captured",
+        "Tooltip shows current mode",
+        "Run `./build.sh` - exits with code 0"
+      ],
+      "priority": 7,
+      "passes": false
+    },
+    {
+      "id": "SC-008",
+      "title": "Final integration test",
+      "description": "Verify screen context works end-to-end",
+      "acceptanceCriteria": [
+        "Run `./build.sh` - exits with code 0",
+        "App launches without errors",
+        "Setting screen context mode persists across restarts",
+        "Config file includes CLAUDIO_SCREEN_CONTEXT",
+        "Manual test: say 'Claude, what's this error?' triggers screenshot"
+      ],
+      "priority": 8,
+      "passes": false
+    }
+  ]
+}
