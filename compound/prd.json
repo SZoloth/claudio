@@ -1,82 +1,58 @@
 {
   "project": "Claudio",
   "branchName": "compound/screen-context",
-  "description": "Add custom wake commands - trigger specific Claude behaviors with voice shortcuts",
+  "description": "Add MCP tool access status - show available MCP servers and their status",
   "tasks": [
     {
-      "id": "WC-001",
-      "title": "Add WakeCommand model",
-      "description": "Create a model for custom wake commands with trigger phrase and action",
+      "id": "MCP-001",
+      "title": "Add MCP server status reading",
+      "description": "Read MCP server configuration from Claude config file",
       "acceptanceCriteria": [
-        "WakeCommand struct with id, trigger, action, and isEnabled properties",
-        "Codable for JSON persistence",
+        "Create MCPConfigReader service that reads ~/.claude.json or similar",
+        "Parse mcpServers configuration",
+        "Return list of server names and enabled status",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 1,
       "passes": true
     },
     {
-      "id": "WC-002",
-      "title": "Add wake commands storage to AppSettings",
-      "description": "Store custom wake commands with UserDefaults persistence",
+      "id": "MCP-002",
+      "title": "Add MCP status section to SettingsView",
+      "description": "Display available MCP servers in Settings",
       "acceptanceCriteria": [
-        "AppSettings has `wakeCommands` property (array of WakeCommand)",
-        "Default includes 'summarize this' and 'explain this' commands",
-        "Persists to UserDefaults as JSON",
+        "SettingsView has Section labeled 'MCP Servers'",
+        "Lists detected MCP servers with status indicators",
+        "Shows info message when agentic mode is required",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 2,
       "passes": true
     },
     {
-      "id": "WC-003",
-      "title": "Add Wake Commands section to SettingsView",
-      "description": "UI for viewing and editing custom wake commands",
+      "id": "MCP-003",
+      "title": "Add MCP indicator to menu bar popover",
+      "description": "Show when MCP servers are available",
       "acceptanceCriteria": [
-        "SettingsView has Section labeled 'Wake Commands'",
-        "Lists existing wake commands with toggle to enable/disable",
-        "Shows trigger phrase and action for each",
+        "StatusHeader shows MCP badge when servers are configured",
+        "Uses distinct color for MCP indicator",
+        "Only shows when agentic mode is enabled",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 3,
       "passes": true
     },
     {
-      "id": "WC-004",
-      "title": "Export wake commands to hook config",
-      "description": "Write wake commands as JSON to hook-config.sh",
-      "acceptanceCriteria": [
-        "SettingsWriter exports CLAUDIO_WAKE_COMMANDS as JSON string",
-        "Only enabled commands are exported",
-        "Run `./build.sh` - exits with code 0"
-      ],
-      "priority": 4,
-      "passes": true
-    },
-    {
-      "id": "WC-005",
-      "title": "Update hook script to match wake commands",
-      "description": "Check transcription against wake commands and apply actions",
-      "acceptanceCriteria": [
-        "Hook script parses CLAUDIO_WAKE_COMMANDS JSON",
-        "Matches trigger phrases against transcription",
-        "Prepends matched action to the LLM prompt",
-        "Test manually with voice command"
-      ],
-      "priority": 5,
-      "passes": true
-    },
-    {
-      "id": "WC-006",
+      "id": "MCP-004",
       "title": "Final integration test",
-      "description": "Verify wake commands work end-to-end",
+      "description": "Verify MCP status display works",
       "acceptanceCriteria": [
         "Run `./build.sh` - exits with code 0",
         "App launches without errors",
-        "Default wake commands appear in settings",
-        "Config file includes CLAUDIO_WAKE_COMMANDS"
+        "MCP section shows in settings when servers configured",
+        "Badge appears in menu bar when appropriate"
       ],
-      "priority": 6,
+      "priority": 4,
       "passes": true
     }
   ]

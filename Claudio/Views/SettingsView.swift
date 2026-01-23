@@ -27,6 +27,9 @@ struct SettingsView: View {
             // WC-003: Wake Commands section
             wakeCommandsSection
 
+            // MCP-002: MCP Servers section
+            mcpServersSection
+
             // T-007: Provider section
             providerSection
 
@@ -296,6 +299,56 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - MCP Servers Section (MCP-002)
+
+    private var mcpServersSection: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 12) {
+                let servers = MCPConfigReader.readServers()
+
+                if servers.isEmpty {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .foregroundStyle(.secondary)
+                        Text("No MCP servers configured in Claude settings")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } else {
+                    ForEach(servers) { server in
+                        MCPServerRow(server: server)
+                    }
+
+                    // Info message about agentic mode
+                    if !settings.agenticMode {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "info.circle")
+                                .foregroundStyle(.orange)
+                            Text("Enable Agentic Mode to use MCP tools with voice commands")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color.orange.opacity(0.1))
+                        )
+                    } else {
+                        HStack(spacing: 4) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                            Text("\(servers.count) MCP server\(servers.count == 1 ? "" : "s") available")
+                                .font(.caption)
+                                .foregroundStyle(.green)
+                        }
+                    }
+                }
+            }
+        } header: {
+            Label("MCP Servers", systemImage: "puzzlepiece.extension")
+        }
+    }
+
     // MARK: - Provider Section (T-007)
 
     private var providerSection: some View {
@@ -553,6 +606,45 @@ struct PathRow: View {
     private func copyToClipboard(_ text: String) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(text, forType: .string)
+    }
+}
+
+struct MCPServerRow: View {
+    let server: MCPServerInfo
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: server.iconName)
+                .font(.system(size: 12))
+                .foregroundStyle(.cyan)
+                .frame(width: 20)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(server.displayName)
+                    .font(.system(size: 12, weight: .medium))
+
+                if let command = server.command {
+                    Text(command)
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+
+            Spacer()
+
+            // Type badge
+            Text(server.type)
+                .font(.system(size: 9, weight: .medium))
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(server.type == "http" ? Color.blue.opacity(0.15) : Color.gray.opacity(0.15))
+                )
+                .foregroundStyle(server.type == "http" ? .blue : .secondary)
+        }
+        .padding(.vertical, 4)
     }
 }
 

@@ -35,6 +35,7 @@
 		026 /* SettingsWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 127; };
 		027 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 128; };
 		028 /* WakeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 129; };
+		029 /* MCPConfigReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +69,7 @@
 		127 /* SettingsWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWriter.swift; sourceTree = "<group>"; };
 		128 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		129 /* WakeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeCommand.swift; sourceTree = "<group>"; };
+		130 /* MCPConfigReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPConfigReader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 				125 /* AppSettings.swift */,
 				126 /* KeychainService.swift */,
 				127 /* SettingsWriter.swift */,
+				130 /* MCPConfigReader.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -269,6 +272,7 @@
 				025 /* KeychainService.swift in Sources */,
 				026 /* SettingsWriter.swift in Sources */,
 				028 /* WakeCommand.swift in Sources */,
+				029 /* MCPConfigReader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

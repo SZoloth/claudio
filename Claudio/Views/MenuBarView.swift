@@ -56,6 +56,13 @@ struct StatusHeader: View {
     @Bindable var viewModel: ClaudioViewModel
     private let settings = AppSettings()
 
+    private var hasStatusIndicators: Bool {
+        settings.transcribeOnlyMode ||
+        settings.screenContextMode != .off ||
+        settings.agenticMode ||
+        (settings.agenticMode && MCPConfigReader.hasServers)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Mode indicators
@@ -104,9 +111,24 @@ struct StatusHeader: View {
                     .background(Color.purple.opacity(0.15))
                     .cornerRadius(4)
                 }
+
+                // MCP-003: MCP servers indicator (only when agentic mode enabled)
+                if settings.agenticMode && MCPConfigReader.hasServers {
+                    HStack(spacing: 4) {
+                        Image(systemName: "puzzlepiece.extension.fill")
+                            .font(.system(size: 10))
+                        Text("MCP: \(MCPConfigReader.serverCount)")
+                            .font(.system(size: 10, weight: .medium))
+                    }
+                    .foregroundStyle(.cyan)
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 8)
+                    .background(Color.cyan.opacity(0.15))
+                    .cornerRadius(4)
+                }
             }
-            .padding(.top, settings.transcribeOnlyMode || settings.screenContextMode != .off || settings.agenticMode ? 8 : 0)
-            .padding(.bottom, settings.transcribeOnlyMode || settings.screenContextMode != .off || settings.agenticMode ? 4 : 0)
+            .padding(.top, hasStatusIndicators ? 8 : 0)
+            .padding(.bottom, hasStatusIndicators ? 4 : 0)
 
             HStack {
                 VStack(alignment: .leading, spacing: 2) {

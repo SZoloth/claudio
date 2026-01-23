@@ -86,3 +86,26 @@ All 6 Wake Commands tasks implemented:
 - SwiftUI Binding with closure: Useful for updating array elements by reference
 
 ---
+
+## 2026-01-22 22:10 - MCP-001 through MCP-004 Complete
+
+All 4 MCP Server Status tasks implemented:
+
+**Files modified/added:**
+- `Claudio/Services/MCPConfigReader.swift` - NEW: Reads MCP config from ~/.claude/settings.json
+- `Claudio.xcodeproj/project.pbxproj` - Added MCPConfigReader.swift to build
+- `Claudio/Views/SettingsView.swift` - Added MCP Servers section showing configured servers
+- `Claudio/Views/MenuBarView.swift` - Added cyan MCP badge when agentic mode + servers available
+
+**Key implementation details:**
+- MCPConfigReader parses ~/.claude/settings.json mcpServers object
+- Shows server type (stdio/http) with appropriate icon
+- MCP indicator only appears when agentic mode is enabled
+- Info message prompts user to enable agentic mode to use MCP tools
+
+**Learnings for future iterations:**
+- Claude Code stores MCP config in ~/.claude/settings.json under "mcpServers" key
+- JSONSerialization is sufficient for reading simple config files in Swift
+- Computed properties in SwiftUI views for conditional display logic keeps body clean
+
+---
