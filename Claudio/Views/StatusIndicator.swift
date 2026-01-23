@@ -39,8 +39,8 @@ struct MenuBarLabel: View {
     let isProcessing: Bool
 
     var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: "waveform")
+        HStack(spacing: 3) {
+            Text("🎙️")
                 .font(.system(size: 14))
 
             StatusIndicator(status: status, isProcessing: isProcessing, size: 6)
