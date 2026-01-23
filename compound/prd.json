@@ -14,7 +14,7 @@
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 1,
-      "passes": false
+      "passes": true
     },
     {
       "id": "SC-002",
@@ -27,7 +27,7 @@
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 2,
-      "passes": false
+      "passes": true
     },
     {
       "id": "SC-003",
@@ -39,7 +39,7 @@
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 3,
-      "passes": false
+      "passes": true
     },
     {
       "id": "SC-004",
@@ -53,7 +53,7 @@
         "Script cleans up screenshots older than 1 hour"
       ],
       "priority": 4,
-      "passes": false
+      "passes": true
     },
     {
       "id": "SC-005",
@@ -66,7 +66,7 @@
         "Test manually with echo"
       ],
       "priority": 5,
-      "passes": false
+      "passes": true
     },
     {
       "id": "SC-006",
@@ -80,7 +80,7 @@
         "Test manually with voice command"
       ],
       "priority": 6,
-      "passes": false
+      "passes": true
     },
     {
       "id": "SC-007",
@@ -93,7 +93,7 @@
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 7,
-      "passes": false
+      "passes": true
     },
     {
       "id": "SC-008",
@@ -107,7 +107,7 @@
         "Manual test: say 'Claude, what's this error?' triggers screenshot"
       ],
       "priority": 8,
-      "passes": false
+      "passes": true
     }
   ]
 }

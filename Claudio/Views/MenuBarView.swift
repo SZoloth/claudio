@@ -58,22 +58,40 @@ struct StatusHeader: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Mode indicator when in transcribe-only mode
-            if settings.transcribeOnlyMode {
-                HStack(spacing: 4) {
-                    Image(systemName: "mic.fill")
-                        .font(.system(size: 10))
-                    Text("Transcribe Mode")
-                        .font(.system(size: 10, weight: .medium))
+            // Mode indicators
+            HStack(spacing: 8) {
+                // Transcribe mode indicator
+                if settings.transcribeOnlyMode {
+                    HStack(spacing: 4) {
+                        Image(systemName: "mic.fill")
+                            .font(.system(size: 10))
+                        Text("Transcribe Mode")
+                            .font(.system(size: 10, weight: .medium))
+                    }
+                    .foregroundStyle(.secondary)
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 8)
+                    .background(Color.orange.opacity(0.15))
+                    .cornerRadius(4)
                 }
-                .foregroundStyle(.secondary)
-                .padding(.vertical, 4)
-                .padding(.horizontal, 8)
-                .background(Color.orange.opacity(0.15))
-                .cornerRadius(4)
-                .padding(.top, 8)
-                .padding(.bottom, 4)
+
+                // SC-007: Screen context indicator
+                if settings.screenContextMode != .off {
+                    HStack(spacing: 4) {
+                        Image(systemName: "camera.viewfinder")
+                            .font(.system(size: 10))
+                        Text(settings.screenContextMode == .always ? "Screen: Always" : "Screen: On-Demand")
+                            .font(.system(size: 10, weight: .medium))
+                    }
+                    .foregroundStyle(.blue)
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 8)
+                    .background(Color.blue.opacity(0.15))
+                    .cornerRadius(4)
+                }
             }
+            .padding(.top, settings.transcribeOnlyMode || settings.screenContextMode != .off ? 8 : 0)
+            .padding(.bottom, settings.transcribeOnlyMode || settings.screenContextMode != .off ? 4 : 0)
 
             HStack {
                 VStack(alignment: .leading, spacing: 2) {

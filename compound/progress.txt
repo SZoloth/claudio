@@ -17,3 +17,23 @@
 - 8 tasks to implement
 
 ---
+
+## 2026-01-22 21:35 - SC-001 through SC-008 Complete
+
+All 8 tasks implemented:
+
+**Files modified:**
+- `Claudio/Services/AppSettings.swift` - Added ScreenContextMode enum and screenContextMode property
+- `Claudio/Views/SettingsView.swift` - Added Screen Context section with picker and mode descriptions
+- `Claudio/Services/SettingsWriter.swift` - Export CLAUDIO_SCREEN_CONTEXT to hook config
+- `Claudio/Views/MenuBarView.swift` - Added screen context indicator in StatusHeader
+- `~/agent-tools/claudio-screenshot.sh` - New screenshot capture helper
+- `~/agent-tools/brabble-claude-hook.sh` - Added trigger detection, screenshot capture, and Claude --image integration
+
+**Learnings for future iterations:**
+- SwiftUI conditional colors: Can't mix HierarchicalShapeStyle (.secondary) with Color (.blue) in ternary - use explicit Color.secondary
+- Claude CLI supports --image flag for vision capabilities
+- OpenAI vision API requires base64 encoding of images and specific JSON structure
+- Screenshot cleanup should happen after LLM call completes to avoid race conditions
+
+---

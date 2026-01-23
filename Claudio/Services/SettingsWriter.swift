@@ -29,6 +29,7 @@ struct SettingsWriter {
             "export CLAUDIO_COPY_CLIPBOARD=\"\(settings.copyToClipboard ? "true" : "false")\"",
             "export CLAUDIO_TRANSCRIBE_ONLY=\"\(settings.transcribeOnlyMode ? "true" : "false")\"",
             "export CLAUDIO_SPEAK_RESPONSE=\"\(settings.speakResponse ? "true" : "false")\"",
+            "export CLAUDIO_SCREEN_CONTEXT=\"\(settings.screenContextMode.rawValue)\"",
         ]
 
         // Only write API key if it exists (don't expose empty string)

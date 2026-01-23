@@ -1,5 +1,30 @@
 import SwiftUI
 
+/// Screen context mode options
+enum ScreenContextMode: String, CaseIterable, Identifiable {
+    case off = "off"
+    case onDemand = "on-demand"
+    case always = "always"
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .off: return "Off"
+        case .onDemand: return "On-Demand"
+        case .always: return "Always"
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .off: return "Screen context disabled"
+        case .onDemand: return "Captures screen when you say \"look at this\", \"what's this\", etc."
+        case .always: return "Always includes screenshot with voice commands"
+        }
+    }
+}
+
 /// LLM provider options
 enum LLMProvider: String, CaseIterable, Identifiable {
     case claude = "claude"
@@ -67,6 +92,7 @@ class AppSettings {
         static let transcribeOnlyMode = "settings.transcribeOnlyMode"
         static let speakResponse = "settings.speakResponse"
         static let ollamaModel = "settings.ollamaModel"
+        static let screenContextMode = "settings.screenContextMode"
     }
 
     /// Selected LLM provider
@@ -144,5 +170,16 @@ class AppSettings {
             return ollamaModel
         }
         return model
+    }
+
+    /// Screen context mode for voice commands
+    var screenContextMode: ScreenContextMode {
+        get {
+            let rawValue = UserDefaults.standard.string(forKey: Keys.screenContextMode) ?? ScreenContextMode.off.rawValue
+            return ScreenContextMode(rawValue: rawValue) ?? .off
+        }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: Keys.screenContextMode)
+        }
     }
 }

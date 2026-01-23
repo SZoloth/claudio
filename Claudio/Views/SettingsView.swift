@@ -18,6 +18,9 @@ struct SettingsView: View {
             // T-011: Mode section
             modeSection
 
+            // SC-002: Screen Context section
+            screenContextSection
+
             // T-007: Provider section
             providerSection
 
@@ -139,6 +142,54 @@ struct SettingsView: View {
             }
         } header: {
             Label("Mode", systemImage: "switch.2")
+        }
+    }
+
+    // MARK: - Screen Context Section (SC-002)
+
+    private var screenContextSection: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 12) {
+                Picker("Screen Context", selection: $settings.screenContextMode) {
+                    ForEach(ScreenContextMode.allCases) { mode in
+                        Text(mode.displayName).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: settings.screenContextMode) { _, _ in
+                    writeConfigAsync()
+                }
+
+                // Mode description
+                HStack(spacing: 8) {
+                    Image(systemName: settings.screenContextMode == .off ? "camera.slash" : "camera.fill")
+                        .foregroundStyle(settings.screenContextMode == .off ? Color.secondary : Color.blue)
+
+                    Text(settings.screenContextMode.description)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                if settings.screenContextMode == .onDemand {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Trigger phrases:")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                        Text("\"look at\", \"see this\", \"what's this\", \"this error\", \"on screen\", \"showing\"")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .italic()
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color.blue.opacity(0.1))
+                    )
+                }
+            }
+        } header: {
+            Label("Screen Context", systemImage: "camera.viewfinder")
         }
     }
 
