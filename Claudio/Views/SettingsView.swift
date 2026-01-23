@@ -516,6 +516,31 @@ struct SettingsView: View {
                 .tint(.green)
             }
 
+            // SVR-002: Streaming response toggle (only when speech enabled)
+            if settings.speakResponse {
+                HStack {
+                    Toggle(isOn: $settings.streamingResponse) {
+                        Label("Stream response", systemImage: "waveform.path")
+                    }
+                    .onChange(of: settings.streamingResponse) { _, _ in
+                        writeConfigAsync()
+                    }
+                    .toggleStyle(.switch)
+                    .tint(.cyan)
+                }
+
+                // Streaming mode description
+                HStack(spacing: 8) {
+                    Image(systemName: settings.streamingResponse ? "hare.fill" : "tortoise.fill")
+                        .foregroundStyle(settings.streamingResponse ? .cyan : .secondary)
+                    Text(settings.streamingResponse
+                        ? "Speaks words as they arrive (faster feedback)"
+                        : "Waits for complete response before speaking")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             // Status indicators
             HStack(spacing: 16) {
                 if settings.copyToClipboard {

@@ -31,6 +31,7 @@ struct SettingsWriter {
             "export CLAUDIO_SPEAK_RESPONSE=\"\(settings.speakResponse ? "true" : "false")\"",
             "export CLAUDIO_SCREEN_CONTEXT=\"\(settings.screenContextMode.rawValue)\"",
             "export CLAUDIO_AGENTIC_MODE=\"\(settings.agenticMode ? "true" : "false")\"",
+            "export CLAUDIO_STREAMING_RESPONSE=\"\(settings.streamingResponse ? "true" : "false")\"",
         ]
 
         // WC-004: Export enabled wake commands as JSON

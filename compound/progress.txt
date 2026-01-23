@@ -109,3 +109,27 @@ All 4 MCP Server Status tasks implemented:
 - Computed properties in SwiftUI views for conditional display logic keeps body clean
 
 ---
+
+## 2026-01-22 21:50 - SVR-001 through SVR-005 Complete
+
+All 5 Streaming Voice Response tasks implemented:
+
+**Files modified:**
+- `Claudio/Services/AppSettings.swift` - Added streamingResponse property (Bool, default false)
+- `Claudio/Views/SettingsView.swift` - Added streaming toggle in Behavior section (conditionally visible)
+- `Claudio/Services/SettingsWriter.swift` - Export CLAUDIO_STREAMING_RESPONSE to hook config
+- `~/agent-tools/brabble-claude-hook.sh` - Added speak_streaming function and conditional speech mode
+
+**Key implementation details:**
+- Streaming toggle only visible when "Speak Response" is enabled (clean UX)
+- speak_streaming function splits text on sentence boundaries and speaks each sequentially
+- Non-streaming mode: single `say` call with full response
+- Streaming mode: sentence-by-sentence speech for faster perceived feedback
+- Used rabbit/tortoise icons to visually indicate speed difference
+
+**Learnings for future iterations:**
+- macOS `say` buffers entire input before speaking - can't pipe stdin for true streaming
+- Sentence-by-sentence is a good middle ground between full-buffer and word-by-word
+- Conditional SwiftUI views (`if setting.enabled { ... }`) cleaner than disabled toggles
+
+---

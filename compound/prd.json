@@ -1,58 +1,68 @@
 {
   "project": "Claudio",
   "branchName": "compound/screen-context",
-  "description": "Add MCP tool access status - show available MCP servers and their status",
+  "description": "Add streaming voice response - speak responses as they arrive instead of waiting",
   "tasks": [
     {
-      "id": "MCP-001",
-      "title": "Add MCP server status reading",
-      "description": "Read MCP server configuration from Claude config file",
+      "id": "SVR-001",
+      "title": "Add streamingResponse setting to AppSettings",
+      "description": "Add toggle for streaming vs full response mode",
       "acceptanceCriteria": [
-        "Create MCPConfigReader service that reads ~/.claude.json or similar",
-        "Parse mcpServers configuration",
-        "Return list of server names and enabled status",
+        "AppSettings has `streamingResponse` property (Bool, default false)",
+        "Property uses UserDefaults for persistence",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 1,
       "passes": true
     },
     {
-      "id": "MCP-002",
-      "title": "Add MCP status section to SettingsView",
-      "description": "Display available MCP servers in Settings",
+      "id": "SVR-002",
+      "title": "Add Streaming option to Behavior section in SettingsView",
+      "description": "Add toggle for streaming response mode",
       "acceptanceCriteria": [
-        "SettingsView has Section labeled 'MCP Servers'",
-        "Lists detected MCP servers with status indicators",
-        "Shows info message when agentic mode is required",
+        "Behavior section has toggle for 'Stream response'",
+        "Shows description of streaming behavior",
+        "Only visible when Speak Response is enabled",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 2,
       "passes": true
     },
     {
-      "id": "MCP-003",
-      "title": "Add MCP indicator to menu bar popover",
-      "description": "Show when MCP servers are available",
+      "id": "SVR-003",
+      "title": "Export streaming setting to hook config",
+      "description": "Write CLAUDIO_STREAMING_RESPONSE to hook-config.sh",
       "acceptanceCriteria": [
-        "StatusHeader shows MCP badge when servers are configured",
-        "Uses distinct color for MCP indicator",
-        "Only shows when agentic mode is enabled",
+        "SettingsWriter exports CLAUDIO_STREAMING_RESPONSE (true/false)",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 3,
       "passes": true
     },
     {
-      "id": "MCP-004",
+      "id": "SVR-004",
+      "title": "Update hook script to support streaming TTS",
+      "description": "Pipe Claude output through say for streaming speech",
+      "acceptanceCriteria": [
+        "Hook script checks CLAUDIO_STREAMING_RESPONSE",
+        "When true: pipes Claude output through say as it arrives",
+        "When false: waits for full response before speaking",
+        "Test manually with voice command"
+      ],
+      "priority": 4,
+      "passes": true
+    },
+    {
+      "id": "SVR-005",
       "title": "Final integration test",
-      "description": "Verify MCP status display works",
+      "description": "Verify streaming response works end-to-end",
       "acceptanceCriteria": [
         "Run `./build.sh` - exits with code 0",
         "App launches without errors",
-        "MCP section shows in settings when servers configured",
-        "Badge appears in menu bar when appropriate"
+        "Streaming setting persists across restarts",
+        "Config file includes CLAUDIO_STREAMING_RESPONSE"
       ],
-      "priority": 4,
+      "priority": 5,
       "passes": true
     }
   ]

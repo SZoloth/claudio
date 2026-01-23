@@ -95,6 +95,7 @@ class AppSettings {
         static let screenContextMode = "settings.screenContextMode"
         static let agenticMode = "settings.agenticMode"
         static let wakeCommands = "settings.wakeCommands"
+        static let streamingResponse = "settings.streamingResponse"
     }
 
     /// Selected LLM provider
@@ -214,5 +215,15 @@ class AppSettings {
     /// Get only enabled wake commands
     var enabledWakeCommands: [WakeCommand] {
         wakeCommands.filter { $0.isEnabled }
+    }
+
+    /// Stream response speech as it arrives (vs waiting for full response)
+    var streamingResponse: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: Keys.streamingResponse)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Keys.streamingResponse)
+        }
     }
 }
