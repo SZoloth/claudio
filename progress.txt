@@ -97,3 +97,26 @@
 - OpenAI/Ollama API calls use curl+jq for simplicity in shell scripts
 
 ---
+
+## 2026-01-22 - Settings Window Improvements
+
+### Implementation
+- Made settings window resizable with `.frame(minWidth: 400, idealWidth: 450, minHeight: 500)`
+- Added window floating level via NSWindow.level in onAppear callback
+- Added rich color coding throughout settings UI:
+  - Mode section: orange (transcribe) vs blue (conversation) status indicators
+  - Provider section: per-provider colors (orange=Claude, green=OpenAI, purple=Ollama)
+  - API Key section: provider-colored save button, green "Saved" status
+  - Model section: provider-colored active indicator
+  - Behavior section: blue/green toggle tints with status indicators
+- Added SF Symbol icons to all section headers for visual hierarchy
+- Added iconName and color computed properties to LLMProvider enum
+
+### Learnings for future iterations:
+- SwiftUI Settings scene doesn't support window level directly - use NSWindow in onAppear
+- Section headers with Label() provide consistent visual hierarchy
+- Provider-specific colors create clear visual association across settings
+- `.buttonStyle(.borderedProminent).tint()` gives colored buttons
+- `.toggleStyle(.switch).tint()` gives colored toggle switches
+
+---

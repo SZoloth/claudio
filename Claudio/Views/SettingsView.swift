@@ -30,30 +30,41 @@ struct SettingsView: View {
             // T-010: Behavior section
             behaviorSection
 
-            Section("General") {
-                Toggle("Launch at login", isOn: $launchAtLogin)
-                    .onChange(of: launchAtLogin) { _, newValue in
-                        setLaunchAtLogin(newValue)
-                    }
+            Section {
+                Toggle(isOn: $launchAtLogin) {
+                    Label("Launch at login", systemImage: "power")
+                }
+                .onChange(of: launchAtLogin) { _, newValue in
+                    setLaunchAtLogin(newValue)
+                }
+                .toggleStyle(.switch)
+            } header: {
+                Label("General", systemImage: "gear")
             }
 
-            Section("About") {
+            Section {
                 LabeledContent("Version") {
                     Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
+                        .foregroundStyle(.blue)
                 }
 
                 LabeledContent("Build") {
                     Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
+                        .foregroundStyle(.secondary)
                 }
+            } header: {
+                Label("About", systemImage: "info.circle")
             }
 
-            Section("Log Paths") {
+            Section {
                 VStack(alignment: .leading, spacing: 8) {
                     PathRow(label: "Transcripts", path: Constants.transcriptsLogPath.path)
                     PathRow(label: "Daemon Log", path: Constants.brabbleLogPath.path)
                     PathRow(label: "Hook Log", path: Constants.claudeHookLogPath.path)
                     PathRow(label: "Hook Config", path: SettingsWriter.configPath)
                 }
+            } header: {
+                Label("Log Paths", systemImage: "folder")
             }
 
             Section {
@@ -64,10 +75,12 @@ struct SettingsView: View {
                 Link(destination: URL(string: "https://github.com/snarktank/claudio")!) {
                     Label("Claudio on GitHub", systemImage: "link")
                 }
+            } header: {
+                Label("Resources", systemImage: "link.circle")
             }
         }
         .formStyle(.grouped)
-        .frame(width: 450)
+        .frame(minWidth: 400, idealWidth: 450, minHeight: 500)
         .alert("Error", isPresented: $showingError) {
             Button("OK") { }
         } message: {
@@ -87,31 +100,61 @@ struct SettingsView: View {
     // MARK: - Mode Section (T-011)
 
     private var modeSection: some View {
-        Section("Mode") {
-            Picker("Operating Mode", selection: $settings.transcribeOnlyMode) {
-                Text("Conversation").tag(false)
-                Text("Transcribe Only").tag(true)
-            }
-            .pickerStyle(.segmented)
-            .onChange(of: settings.transcribeOnlyMode) { _, _ in
-                writeConfigAsync()
-            }
+        Section {
+            VStack(alignment: .leading, spacing: 12) {
+                Picker("Operating Mode", selection: $settings.transcribeOnlyMode) {
+                    Label("Conversation", systemImage: "bubble.left.and.bubble.right.fill")
+                        .tag(false)
+                    Label("Transcribe Only", systemImage: "mic.fill")
+                        .tag(true)
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: settings.transcribeOnlyMode) { _, _ in
+                    writeConfigAsync()
+                }
 
-            if settings.transcribeOnlyMode {
-                Text("Transcribe speech, clean up with AI, copy to clipboard")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                // Mode status indicator with color
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(settings.transcribeOnlyMode ? Color.orange : Color.blue)
+                        .frame(width: 8, height: 8)
+
+                    Text(settings.transcribeOnlyMode ? "Transcribe Mode Active" : "Conversation Mode Active")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundStyle(settings.transcribeOnlyMode ? Color.orange : Color.blue)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(settings.transcribeOnlyMode ? Color.orange.opacity(0.15) : Color.blue.opacity(0.15))
+                )
+
+                if settings.transcribeOnlyMode {
+                    Text("Transcribe speech, clean up with AI, copy to clipboard")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
+        } header: {
+            Label("Mode", systemImage: "switch.2")
         }
     }
 
     // MARK: - Provider Section (T-007)
 
     private var providerSection: some View {
-        Section("LLM Provider") {
+        Section {
             Picker("Provider", selection: $settings.provider) {
                 ForEach(LLMProvider.allCases) { provider in
-                    Text(provider.displayName).tag(provider)
+                    Label {
+                        Text(provider.displayName)
+                    } icon: {
+                        Image(systemName: provider.iconName)
+                            .foregroundStyle(provider.color)
+                    }
+                    .tag(provider)
                 }
             }
             .onChange(of: settings.provider) { _, newProvider in
@@ -120,93 +163,180 @@ struct SettingsView: View {
                 apiKeyInput = ""
                 writeConfigAsync()
             }
+
+            // Current provider status
+            HStack(spacing: 8) {
+                Image(systemName: settings.provider.iconName)
+                    .foregroundStyle(settings.provider.color)
+                Text("Using \(settings.provider.displayName)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        } header: {
+            Label("LLM Provider", systemImage: "cpu")
         }
     }
 
     // MARK: - API Key Section (T-008)
 
     private var apiKeySection: some View {
-        Section("API Key") {
+        Section {
             VStack(alignment: .leading, spacing: 8) {
-                Text("API Key for \(settings.provider.displayName)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 8) {
+                    Image(systemName: settings.provider.iconName)
+                        .foregroundStyle(settings.provider.color)
+                    Text("API Key for \(settings.provider.displayName)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
 
                 HStack {
                     SecureField("Enter API key...", text: $apiKeyInput)
                         .textFieldStyle(.roundedBorder)
 
                     if apiKeySaved && apiKeyInput.isEmpty {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                            .help("API key saved")
+                        HStack(spacing: 4) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                            Text("Saved")
+                                .font(.caption)
+                                .foregroundStyle(.green)
+                        }
+                        .help("API key saved securely in Keychain")
                     }
 
                     Button("Save") {
                         saveAPIKey()
                     }
                     .disabled(apiKeyInput.isEmpty)
+                    .buttonStyle(.borderedProminent)
+                    .tint(settings.provider.color)
                 }
 
                 if settings.provider == .claude {
-                    Text("Claude uses the CLI authentication. API key is optional.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 4) {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(.blue)
+                        Text("Claude uses CLI authentication. API key is optional.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
+        } header: {
+            Label("API Key", systemImage: "key.fill")
         }
     }
 
     // MARK: - Model Section (T-009)
 
     private var modelSection: some View {
-        Section("Model") {
+        Section {
             if settings.provider == .ollama {
                 // Ollama: text field for custom model
-                HStack {
-                    TextField("Model name", text: $ollamaModelInput)
-                        .textFieldStyle(.roundedBorder)
-                        .onSubmit {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        TextField("Model name", text: $ollamaModelInput)
+                            .textFieldStyle(.roundedBorder)
+                            .onSubmit {
+                                settings.ollamaModel = ollamaModelInput
+                                writeConfigAsync()
+                            }
+
+                        Button("Set") {
                             settings.ollamaModel = ollamaModelInput
                             writeConfigAsync()
                         }
-
-                    Button("Set") {
-                        settings.ollamaModel = ollamaModelInput
-                        writeConfigAsync()
+                        .buttonStyle(.borderedProminent)
+                        .tint(.purple)
                     }
-                }
 
-                Text("Enter the Ollama model name (e.g., llama3, mistral, codellama)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    Text("Enter the Ollama model name (e.g., llama3, mistral, codellama)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             } else {
                 // Claude/OpenAI: picker from predefined models
-                Picker("Model", selection: $settings.model) {
-                    ForEach(settings.provider.models, id: \.self) { model in
-                        Text(model).tag(model)
+                VStack(alignment: .leading, spacing: 8) {
+                    Picker("Model", selection: $settings.model) {
+                        ForEach(settings.provider.models, id: \.self) { model in
+                            Text(model).tag(model)
+                        }
+                    }
+                    .onChange(of: settings.model) { _, _ in
+                        writeConfigAsync()
+                    }
+
+                    // Current model indicator
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(settings.provider.color)
+                            .frame(width: 6, height: 6)
+                        Text("Active: \(settings.model)")
+                            .font(.caption)
+                            .foregroundStyle(settings.provider.color)
                     }
                 }
-                .onChange(of: settings.model) { _, _ in
-                    writeConfigAsync()
-                }
             }
+        } header: {
+            Label("Model", systemImage: "cube.box")
         }
     }
 
     // MARK: - Behavior Section (T-010)
 
     private var behaviorSection: some View {
-        Section("Behavior") {
-            Toggle("Copy response to clipboard", isOn: $settings.copyToClipboard)
+        Section {
+            HStack {
+                Toggle(isOn: $settings.copyToClipboard) {
+                    Label("Copy response to clipboard", systemImage: "doc.on.clipboard")
+                }
                 .onChange(of: settings.copyToClipboard) { _, _ in
                     writeConfigAsync()
                 }
+                .toggleStyle(.switch)
+                .tint(.blue)
+            }
 
-            Toggle("Speak response aloud", isOn: $settings.speakResponse)
+            HStack {
+                Toggle(isOn: $settings.speakResponse) {
+                    Label("Speak response aloud", systemImage: "speaker.wave.2")
+                }
                 .onChange(of: settings.speakResponse) { _, _ in
                     writeConfigAsync()
                 }
+                .toggleStyle(.switch)
+                .tint(.green)
+            }
+
+            // Status indicators
+            HStack(spacing: 16) {
+                if settings.copyToClipboard {
+                    HStack(spacing: 4) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.blue)
+                        Text("Clipboard")
+                            .font(.caption)
+                            .foregroundStyle(.blue)
+                    }
+                }
+                if settings.speakResponse {
+                    HStack(spacing: 4) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                        Text("Speech")
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                    }
+                }
+                if !settings.copyToClipboard && !settings.speakResponse {
+                    Text("No output options enabled")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        } header: {
+            Label("Behavior", systemImage: "gearshape.2")
         }
     }
 

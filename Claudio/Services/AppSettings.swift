@@ -36,6 +36,24 @@ enum LLMProvider: String, CaseIterable, Identifiable {
         case .ollama: return "llama3"
         }
     }
+
+    /// SF Symbol icon name for this provider
+    var iconName: String {
+        switch self {
+        case .claude: return "brain.head.profile"
+        case .openai: return "sparkles"
+        case .ollama: return "laptopcomputer"
+        }
+    }
+
+    /// Brand color for this provider
+    var color: Color {
+        switch self {
+        case .claude: return .orange
+        case .openai: return .green
+        case .ollama: return .purple
+        }
+    }
 }
 
 /// App settings with @AppStorage persistence
