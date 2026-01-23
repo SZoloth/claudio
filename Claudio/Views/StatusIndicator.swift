@@ -40,7 +40,7 @@ struct MenuBarLabel: View {
 
     var body: some View {
         HStack(spacing: 3) {
-            Text("🎙️")
+            Text("🦞")
                 .font(.system(size: 14))
 
             StatusIndicator(status: status, isProcessing: isProcessing, size: 6)
