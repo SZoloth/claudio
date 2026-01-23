@@ -1,79 +1,80 @@
 {
   "project": "Claudio",
   "branchName": "compound/screen-context",
-  "description": "Add agentic execution mode - allow Claude to use tools and take actions via voice commands",
+  "description": "Add custom wake commands - trigger specific Claude behaviors with voice shortcuts",
   "tasks": [
     {
-      "id": "AG-001",
-      "title": "Add agenticMode to AppSettings",
-      "description": "Add a boolean setting to enable/disable agentic mode",
+      "id": "WC-001",
+      "title": "Add WakeCommand model",
+      "description": "Create a model for custom wake commands with trigger phrase and action",
       "acceptanceCriteria": [
-        "AppSettings has `agenticMode` property (Bool, default false)",
-        "Property uses @AppStorage for persistence",
+        "WakeCommand struct with id, trigger, action, and isEnabled properties",
+        "Codable for JSON persistence",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 1,
       "passes": true
     },
     {
-      "id": "AG-002",
-      "title": "Add Agentic Mode section to SettingsView",
-      "description": "Add UI toggle for agentic mode with safety warnings",
+      "id": "WC-002",
+      "title": "Add wake commands storage to AppSettings",
+      "description": "Store custom wake commands with UserDefaults persistence",
       "acceptanceCriteria": [
-        "SettingsView has Section labeled 'Agentic Mode'",
-        "Contains Toggle for enabling agentic mode",
-        "Shows warning about tool permissions when enabled",
+        "AppSettings has `wakeCommands` property (array of WakeCommand)",
+        "Default includes 'summarize this' and 'explain this' commands",
+        "Persists to UserDefaults as JSON",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 2,
       "passes": true
     },
     {
-      "id": "AG-003",
-      "title": "Update SettingsWriter to export agentic mode setting",
-      "description": "Write CLAUDIO_AGENTIC_MODE to hook-config.sh",
+      "id": "WC-003",
+      "title": "Add Wake Commands section to SettingsView",
+      "description": "UI for viewing and editing custom wake commands",
       "acceptanceCriteria": [
-        "SettingsWriter exports CLAUDIO_AGENTIC_MODE (true/false)",
-        "Config file includes the new setting",
+        "SettingsView has Section labeled 'Wake Commands'",
+        "Lists existing wake commands with toggle to enable/disable",
+        "Shows trigger phrase and action for each",
         "Run `./build.sh` - exits with code 0"
       ],
       "priority": 3,
       "passes": true
     },
     {
-      "id": "AG-004",
-      "title": "Update hook script to support agentic mode",
-      "description": "Remove -p flag when agentic mode is enabled",
+      "id": "WC-004",
+      "title": "Export wake commands to hook config",
+      "description": "Write wake commands as JSON to hook-config.sh",
       "acceptanceCriteria": [
-        "Hook script checks CLAUDIO_AGENTIC_MODE",
-        "When true: uses `claude --continue` without -p flag",
-        "When false: uses `claude -p` (prompt-only mode)",
-        "Test manually with voice command"
+        "SettingsWriter exports CLAUDIO_WAKE_COMMANDS as JSON string",
+        "Only enabled commands are exported",
+        "Run `./build.sh` - exits with code 0"
       ],
       "priority": 4,
       "passes": true
     },
     {
-      "id": "AG-005",
-      "title": "Add agentic mode indicator to Claudio UI",
-      "description": "Show when agentic mode is active in the menu bar popover",
+      "id": "WC-005",
+      "title": "Update hook script to match wake commands",
+      "description": "Check transcription against wake commands and apply actions",
       "acceptanceCriteria": [
-        "StatusHeader shows robot icon when agentic mode is enabled",
-        "Uses distinct color (purple) for agentic mode indicator",
-        "Run `./build.sh` - exits with code 0"
+        "Hook script parses CLAUDIO_WAKE_COMMANDS JSON",
+        "Matches trigger phrases against transcription",
+        "Prepends matched action to the LLM prompt",
+        "Test manually with voice command"
       ],
       "priority": 5,
       "passes": true
     },
     {
-      "id": "AG-006",
+      "id": "WC-006",
       "title": "Final integration test",
-      "description": "Verify agentic mode works end-to-end",
+      "description": "Verify wake commands work end-to-end",
       "acceptanceCriteria": [
         "Run `./build.sh` - exits with code 0",
         "App launches without errors",
-        "Setting agentic mode persists across restarts",
-        "Config file includes CLAUDIO_AGENTIC_MODE"
+        "Default wake commands appear in settings",
+        "Config file includes CLAUDIO_WAKE_COMMANDS"
       ],
       "priority": 6,
       "passes": true

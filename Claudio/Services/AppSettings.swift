@@ -94,6 +94,7 @@ class AppSettings {
         static let ollamaModel = "settings.ollamaModel"
         static let screenContextMode = "settings.screenContextMode"
         static let agenticMode = "settings.agenticMode"
+        static let wakeCommands = "settings.wakeCommands"
     }
 
     /// Selected LLM provider
@@ -192,5 +193,26 @@ class AppSettings {
         set {
             UserDefaults.standard.set(newValue, forKey: Keys.agenticMode)
         }
+    }
+
+    /// Custom wake commands for voice triggers
+    var wakeCommands: [WakeCommand] {
+        get {
+            guard let data = UserDefaults.standard.data(forKey: Keys.wakeCommands),
+                  let commands = try? JSONDecoder().decode([WakeCommand].self, from: data) else {
+                return WakeCommand.defaults
+            }
+            return commands
+        }
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                UserDefaults.standard.set(data, forKey: Keys.wakeCommands)
+            }
+        }
+    }
+
+    /// Get only enabled wake commands
+    var enabledWakeCommands: [WakeCommand] {
+        wakeCommands.filter { $0.isEnabled }
     }
 }

@@ -61,3 +61,28 @@ All 6 Agentic Mode tasks implemented:
 - SourceKit errors during editing are often transient - always verify with actual build
 
 ---
+
+## 2026-01-22 21:55 - WC-001 through WC-006 Complete
+
+All 6 Wake Commands tasks implemented:
+
+**Files modified/added:**
+- `Claudio/Models/WakeCommand.swift` - NEW: Model with trigger, action, isEnabled
+- `Claudio.xcodeproj/project.pbxproj` - Added WakeCommand.swift to build
+- `Claudio/Services/AppSettings.swift` - Added wakeCommands property with JSON persistence
+- `Claudio/Views/SettingsView.swift` - Added Wake Commands section with toggleable command rows
+- `Claudio/Services/SettingsWriter.swift` - Export CLAUDIO_WAKE_COMMANDS as JSON
+- `~/agent-tools/brabble-claude-hook.sh` - Apply wake command action prepend via jq
+
+**Default wake commands:**
+- "summarize this" → "Please provide a concise summary of the following:"
+- "explain this" → "Please explain the following in simple terms:"
+- "fix this" → "Please identify and fix any issues with the following:"
+- "review this" → "Please provide a thorough code review of the following:"
+
+**Learnings for future iterations:**
+- JSON export with bash: Use single quotes and escape embedded single quotes with '\''
+- jq for JSON parsing in bash: `jq -r --arg text "$var" '.[] | select(...)'`
+- SwiftUI Binding with closure: Useful for updating array elements by reference
+
+---

@@ -34,6 +34,7 @@
 		025 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126; };
 		026 /* SettingsWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 127; };
 		027 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 128; };
+		028 /* WakeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 129; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +67,7 @@
 		126 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		127 /* SettingsWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWriter.swift; sourceTree = "<group>"; };
 		128 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		129 /* WakeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeCommand.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +127,7 @@
 				104 /* DaemonStatus.swift */,
 				118 /* ConversationSession.swift */,
 				120 /* SessionStats.swift */,
+				129 /* WakeCommand.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 				024 /* AppSettings.swift in Sources */,
 				025 /* KeychainService.swift in Sources */,
 				026 /* SettingsWriter.swift in Sources */,
+				028 /* WakeCommand.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

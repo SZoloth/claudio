@@ -24,6 +24,9 @@ struct SettingsView: View {
             // AG-002: Agentic Mode section
             agenticModeSection
 
+            // WC-003: Wake Commands section
+            wakeCommandsSection
+
             // T-007: Provider section
             providerSection
 
@@ -256,6 +259,40 @@ struct SettingsView: View {
             }
         } header: {
             Label("Agentic Mode", systemImage: "wand.and.stars")
+        }
+    }
+
+    // MARK: - Wake Commands Section (WC-003)
+
+    private var wakeCommandsSection: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(settings.wakeCommands) { command in
+                    WakeCommandRow(command: command) { updatedCommand in
+                        updateWakeCommand(updatedCommand)
+                    }
+                }
+
+                // Info text
+                HStack(spacing: 8) {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(.secondary)
+                    Text("Wake commands prepend instructions to your voice input")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        } header: {
+            Label("Wake Commands", systemImage: "text.bubble")
+        }
+    }
+
+    private func updateWakeCommand(_ command: WakeCommand) {
+        var commands = settings.wakeCommands
+        if let index = commands.firstIndex(where: { $0.id == command.id }) {
+            commands[index] = command
+            settings.wakeCommands = commands
+            writeConfigAsync()
         }
     }
 
@@ -516,6 +553,48 @@ struct PathRow: View {
     private func copyToClipboard(_ text: String) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(text, forType: .string)
+    }
+}
+
+struct WakeCommandRow: View {
+    let command: WakeCommand
+    let onUpdate: (WakeCommand) -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            // Enable/disable toggle
+            Toggle("", isOn: Binding(
+                get: { command.isEnabled },
+                set: { newValue in
+                    var updated = command
+                    updated.isEnabled = newValue
+                    onUpdate(updated)
+                }
+            ))
+            .labelsHidden()
+            .toggleStyle(.switch)
+            .tint(.green)
+
+            // Command info
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    Image(systemName: "waveform")
+                        .font(.system(size: 10))
+                        .foregroundStyle(command.isEnabled ? .green : .secondary)
+                    Text("\"\(command.trigger)\"")
+                        .font(.system(size: 12, weight: .medium, design: .monospaced))
+                        .foregroundStyle(command.isEnabled ? .primary : .secondary)
+                }
+
+                Text(command.action)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+
+            Spacer()
+        }
+        .padding(.vertical, 4)
     }
 }
 

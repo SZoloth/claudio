@@ -33,6 +33,18 @@ struct SettingsWriter {
             "export CLAUDIO_AGENTIC_MODE=\"\(settings.agenticMode ? "true" : "false")\"",
         ]
 
+        // WC-004: Export enabled wake commands as JSON
+        let enabledCommands = settings.enabledWakeCommands
+        if !enabledCommands.isEmpty {
+            let commandsData = enabledCommands.map { ["trigger": $0.trigger, "action": $0.action] }
+            if let jsonData = try? JSONSerialization.data(withJSONObject: commandsData),
+               let jsonString = String(data: jsonData, encoding: .utf8) {
+                // Escape single quotes for bash
+                let escapedJson = jsonString.replacingOccurrences(of: "'", with: "'\\''")
+                lines.append("export CLAUDIO_WAKE_COMMANDS='\(escapedJson)'")
+            }
+        }
+
         // Only write API key if it exists (don't expose empty string)
         if !apiKey.isEmpty {
             lines.append("export CLAUDIO_API_KEY=\"\(apiKey)\"")
